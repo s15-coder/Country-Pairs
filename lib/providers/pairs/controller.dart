@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/constants/countries.dart';
 import 'package:pairs_game/models/country.dart';
@@ -6,7 +7,10 @@ import 'package:pairs_game/providers/pairs/state.dart';
 
 class PairsController extends StateNotifier<PairsState> {
   final Ref ref;
-  PairsController(this.ref) : super(PairsState.initial());
+  late AudioPlayer audioPlayer;
+  PairsController(this.ref) : super(PairsState.initial()) {
+    audioPlayer = AudioPlayer();
+  }
 
   void selectDifficulty(Difficulty difficulty) {
     state = PairsState.initial();
@@ -26,15 +30,18 @@ class PairsController extends StateNotifier<PairsState> {
     );
   }
 
-  void selectCard(int index) {
+  Future<void> selectCard(int index) async {
+    // Check if the card is already discovered or selected
     if (state.discoveredIndexes.contains(index) ||
         state.selectedIndex == index ||
         state.selectedIndex2 == index) {
       return;
     }
+    // If both indexes are selected, then wait until they get resetted
     if (state.selectedIndex != null && state.selectedIndex2 != null) {
       return;
     }
+
     if (state.selectedIndex == null) {
       state = state.copyWith(selectedIndex: index);
     } else if (state.selectedIndex2 == null && state.selectedIndex != index) {
@@ -44,6 +51,7 @@ class PairsController extends StateNotifier<PairsState> {
     if (state.selectedIndex != null && state.selectedIndex2 != null) {
       if (state.countriesInGame[state.selectedIndex!].country ==
           state.countriesInGame[state.selectedIndex2!].country) {
+        await audioPlayer.play(AssetSource("sound/success.mp3"));
         Future.delayed(const Duration(seconds: 1), () {
           state = state.copyWith(
             discoveredIndexes: [
@@ -55,6 +63,7 @@ class PairsController extends StateNotifier<PairsState> {
           state = state.copyWithoutSelectedIndexes();
         });
       } else {
+        await audioPlayer.play(AssetSource("sound/error.mp3"));
         Future.delayed(const Duration(seconds: 1), () {
           state = state.copyWithoutSelectedIndexes();
         });
