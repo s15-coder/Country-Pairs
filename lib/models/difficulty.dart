@@ -8,6 +8,7 @@ enum Difficulty {
       xItems: 3,
       yItems: 4,
     ),
+    secondsDuration: 60,
   ),
   medium(
     cardsAmount: 10,
@@ -16,6 +17,7 @@ enum Difficulty {
       xItems: 4,
       yItems: 5,
     ),
+    secondsDuration: 70,
   ),
   hard(
     cardsAmount: 15,
@@ -24,6 +26,7 @@ enum Difficulty {
       xItems: 5,
       yItems: 6,
     ),
+    secondsDuration: 80,
   ),
   expert(
     cardsAmount: 20,
@@ -32,6 +35,7 @@ enum Difficulty {
       xItems: 5,
       yItems: 8,
     ),
+    secondsDuration: 90,
   ),
   ;
 
@@ -39,8 +43,10 @@ enum Difficulty {
     required this.cardsAmount,
     required this.label,
     required this.gridLayout,
+    required this.secondsDuration,
   });
   final int cardsAmount;
   final String label;
   final GridLayout gridLayout;
+  final int secondsDuration;
 }

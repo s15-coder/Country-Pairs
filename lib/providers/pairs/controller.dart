@@ -10,6 +10,7 @@ class PairsController extends StateNotifier<PairsState> {
   late AudioPlayer audioPlayer;
   PairsController(this.ref) : super(PairsState.initial()) {
     audioPlayer = AudioPlayer();
+    selectDifficulty(state.difficulty);
   }
 
   void selectDifficulty(Difficulty difficulty) {
@@ -49,6 +50,7 @@ class PairsController extends StateNotifier<PairsState> {
     }
 
     if (state.selectedIndex != null && state.selectedIndex2 != null) {
+      state = state.copyWith(attempts: state.attempts + 1);
       if (state.countriesInGame[state.selectedIndex!].country ==
           state.countriesInGame[state.selectedIndex2!].country) {
         await audioPlayer.play(AssetSource("sound/success.mp3"));
@@ -59,15 +61,36 @@ class PairsController extends StateNotifier<PairsState> {
               state.selectedIndex!,
               state.selectedIndex2!
             ],
-          );
-          state = state.copyWithoutSelectedIndexes();
+          ).copyWithoutSelectedIndexes();
         });
       } else {
-        await audioPlayer.play(AssetSource("sound/error.mp3"));
         Future.delayed(const Duration(seconds: 1), () {
           state = state.copyWithoutSelectedIndexes();
         });
       }
     }
+  }
+
+  void updateRemainingSeconds(int seconds) {
+    state = state.copyWith(remainingSeconds: seconds);
+  }
+
+  void resetGame() {
+    final oldDifficulty = state.difficulty;
+    selectDifficulty(oldDifficulty);
+  }
+
+  int calculateScore() {
+    final maxSeconds = state.difficulty.secondsDuration;
+    final remainingSeconds = state.remainingSeconds;
+    final attempts = state.attempts;
+
+    if (attempts == 0 || maxSeconds == 0) return 0;
+
+    final timeFactor = (remainingSeconds / maxSeconds).clamp(0, 1);
+    final attemptFactor = (1 / attempts).clamp(0, 1);
+
+    final score = (timeFactor * 0.5 + attemptFactor * 0.5) * 100;
+    return score.round();
   }
 }

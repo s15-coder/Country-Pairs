@@ -7,12 +7,17 @@ class PairsState {
   final Difficulty difficulty;
   final int? selectedIndex;
   final int? selectedIndex2;
+  final int attempts;
+  final int remainingSeconds;
+
   const PairsState({
     required this.countriesInGame,
     required this.difficulty,
     required this.selectedIndex,
     required this.selectedIndex2,
     required this.discoveredIndexes,
+    this.attempts = 0,
+    this.remainingSeconds = 0,
   });
   PairsState copyWith({
     List<Country>? countriesInGame,
@@ -20,6 +25,8 @@ class PairsState {
     int? selectedIndex,
     int? selectedIndex2,
     List<int>? discoveredIndexes,
+    int? attempts,
+    int? remainingSeconds,
   }) {
     return PairsState(
       countriesInGame: countriesInGame ?? this.countriesInGame,
@@ -27,6 +34,8 @@ class PairsState {
       selectedIndex: selectedIndex ?? this.selectedIndex,
       selectedIndex2: selectedIndex2 ?? this.selectedIndex2,
       discoveredIndexes: discoveredIndexes ?? this.discoveredIndexes,
+      attempts: attempts ?? this.attempts,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
     );
   }
 
@@ -36,7 +45,9 @@ class PairsState {
       difficulty: difficulty,
       selectedIndex: null,
       selectedIndex2: null,
+      attempts: attempts,
       discoveredIndexes: discoveredIndexes,
+      remainingSeconds: remainingSeconds,
     );
   }
 
@@ -45,5 +56,7 @@ class PairsState {
         difficulty = Difficulty.easy,
         selectedIndex = null,
         discoveredIndexes = [],
+        attempts = 0,
+        remainingSeconds = 0,
         selectedIndex2 = null;
 }

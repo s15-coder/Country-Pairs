@@ -1,101 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/components/pair_item.dart';
+import 'package:pairs_game/components/custom_dialog.dart';
+import 'package:pairs_game/components/game_timer.dart';
+import 'package:pairs_game/components/home_bottom_navigator.dart';
+import 'package:pairs_game/components/pairs_grid.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
+import 'package:pairs_game/models/button_action.dart';
+import 'package:pairs_game/models/difficulty.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
 
-class HomePairsPage extends ConsumerWidget {
+class HomePairsPage extends ConsumerStatefulWidget {
   const HomePairsPage({super.key});
 
   static const String routeName = '/homePairsPages';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final providerState = ref.watch(pairsProvider);
-    final size = MediaQuery.of(context).size;
-    final widthMinusSpaces =
-        (size.width - ((providerState.difficulty.gridLayout.xItems * 5)) - 16);
-    final width = widthMinusSpaces / providerState.difficulty.gridLayout.xItems;
+  ConsumerState<HomePairsPage> createState() => _HomePairsPageState();
+}
 
+class _HomePairsPageState extends ConsumerState<HomePairsPage> {
+  late GameTimerController _gameTimerController;
+  @override
+  void initState() {
+    final initialTime = ref
+        .read(pairsProvider.select((state) => state.difficulty))
+        .secondsDuration;
+    _gameTimerController = GameTimerController(initialTime: initialTime);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Difficulty difficulty =
+        ref.watch(pairsProvider.select((state) => state.difficulty));
     return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ]),
-        appBar: AppBar(
-          leading: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: Colors.white,
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          bottomNavigationBar: HomeBottomNavigator(),
+          appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              onPressed: () => onArrowBackPressed(context),
             ),
-            child: Text(
-              '60',
+            title: Text(
+              difficulty.label,
               style: TextStyle(
-                color: UIColors.black,
-                fontSize: 20,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          title: Text(
-            providerState.difficulty.label,
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-          backgroundColor: UIColors.black,
-          actions: [
-            IconButton(
-              onPressed: () {
-                // ref.read(pairsProvider.notifier).resetGame();
-              },
-              icon: const Icon(
-                Icons.refresh,
-                color: UIColors.green,
+            centerTitle: true,
+            backgroundColor: UIColors.black,
+            actions: [
+              GameTimer(
+                controller: _gameTimerController,
+                onTimerTick: (remainingSeconds) {
+                  ref
+                      .read(pairsProvider.notifier)
+                      .updateRemainingSeconds(remainingSeconds);
+                },
+                onTimerEnd: () => onTimerEnd(context, ref),
               ),
-            ),
-          ],
-        ),
-        backgroundColor: UIColors.darkGray,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.start,
-                runAlignment: WrapAlignment.center,
-                spacing: 5,
-                runSpacing: 5,
-                children: List.generate(providerState.countriesInGame.length,
-                    (index) {
-                  final countryObj = providerState.countriesInGame[index];
-                  return PairItem(
-                    width: width,
-                    countryCode: countryObj.countryCode,
-                    isFlipped: providerState.selectedIndex == index ||
-                        providerState.selectedIndex2 == index,
-                    isDiscovered:
-                        providerState.discoveredIndexes.contains(index),
-                    onTap: () {
-                      ref.read(pairsProvider.notifier).selectCard(index);
-                    },
-                  );
-                }),
-              ),
-            )
-          ],
+            ],
+          ),
+          backgroundColor: UIColors.darkGray,
+          body: Center(child: PairsGrid()),
         ),
       ),
+    );
+  }
+
+  void onTimerEnd(BuildContext context, WidgetRef ref) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return CustomDialog(
+            actionLeft: ButtonAction(
+              buttonStyle: ButtonStyleType.outline,
+              text: 'Exit',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            actionRight: ButtonAction(
+              buttonStyle: ButtonStyleType.material,
+              text: 'Try again',
+              onPressed: () {
+                Navigator.pop(context);
+                ref.read(pairsProvider.notifier).resetGame();
+                final state = ref.read(pairsProvider);
+                _gameTimerController.setTime(state.difficulty.secondsDuration);
+                _gameTimerController.start();
+              },
+            ),
+            text: 'Time is up!',
+          );
+        });
+  }
+
+  void onArrowBackPressed(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) {
+        return CustomDialog(
+          actionLeft: ButtonAction(
+            buttonStyle: ButtonStyleType.outline,
+            text: 'Cancel',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          actionRight: ButtonAction(
+            buttonStyle: ButtonStyleType.material,
+            text: 'Confirm',
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+          text: 'Are you sure you want to exit the game?',
+        );
+      },
     );
   }
 }
