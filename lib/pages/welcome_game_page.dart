@@ -32,6 +32,7 @@ class WelcomeGamePage extends ConsumerWidget {
                 PlayerNameField(),
                 WelcomeButton(
                   onPressed: () {
+                    ref.read(pairsProvider.notifier).shuffleGameCards();
                     Navigator.pushNamed(
                       context,
                       HomePairsPage.routeName,

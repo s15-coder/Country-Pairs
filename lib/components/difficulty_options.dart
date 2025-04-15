@@ -16,7 +16,7 @@ class DifficultyOptions extends ConsumerWidget {
         WelcomeButton(
           color: Colors.white,
           onPressed: () {
-            pairsProviderController.selectDifficulty(Difficulty.easy);
+            pairsProviderController.updateDifficulty(Difficulty.easy);
             Navigator.pop(context);
           },
           text: "Easy",
@@ -24,7 +24,7 @@ class DifficultyOptions extends ConsumerWidget {
         WelcomeButton(
           color: Colors.white,
           onPressed: () {
-            pairsProviderController.selectDifficulty(Difficulty.medium);
+            pairsProviderController.updateDifficulty(Difficulty.medium);
             Navigator.pop(context);
           },
           text: 'Medium',
@@ -32,7 +32,7 @@ class DifficultyOptions extends ConsumerWidget {
         WelcomeButton(
           color: Colors.white,
           onPressed: () {
-            pairsProviderController.selectDifficulty(Difficulty.hard);
+            pairsProviderController.updateDifficulty(Difficulty.hard);
             Navigator.pop(context);
           },
           text: 'Hard',
@@ -40,7 +40,7 @@ class DifficultyOptions extends ConsumerWidget {
         WelcomeButton(
           color: Colors.white,
           onPressed: () {
-            pairsProviderController.selectDifficulty(Difficulty.expert);
+            pairsProviderController.updateDifficulty(Difficulty.expert);
             Navigator.pop(context);
           },
           text: 'Extreme',

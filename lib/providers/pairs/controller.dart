@@ -10,15 +10,17 @@ class PairsController extends StateNotifier<PairsState> {
   late AudioPlayer audioPlayer;
   PairsController(this.ref) : super(PairsState.initial()) {
     audioPlayer = AudioPlayer();
-    selectDifficulty(state.difficulty);
+  }
+  void updateDifficulty(Difficulty difficulty) {
+    state = state.copyWith(difficulty: difficulty);
   }
 
-  void selectDifficulty(Difficulty difficulty) {
+  void shuffleGameCards() {
     state = PairsState.initial();
     List<dynamic> countriesCopy = [...countries];
     countriesCopy.shuffle();
     countriesCopy = countriesCopy
-        .take(difficulty.cardsAmount)
+        .take(state.difficulty.cardsAmount)
         .map(
           (e) => Country.fromJson(e),
         )
@@ -26,7 +28,7 @@ class PairsController extends StateNotifier<PairsState> {
     countriesCopy = [...countriesCopy, ...countriesCopy];
     countriesCopy.shuffle();
     state = state.copyWith(
-      difficulty: difficulty,
+      difficulty: state.difficulty,
       countriesInGame: countriesCopy.cast<Country>(),
     );
   }
@@ -38,7 +40,7 @@ class PairsController extends StateNotifier<PairsState> {
         state.selectedIndex2 == index) {
       return;
     }
-    // If both indexes are selected, then wait until they get resetted
+    // If both indexes are selected, then wait until they get resetted or the game finish
     if (state.selectedIndex != null && state.selectedIndex2 != null) {
       return;
     }
@@ -47,21 +49,18 @@ class PairsController extends StateNotifier<PairsState> {
       state = state.copyWith(selectedIndex: index);
     } else if (state.selectedIndex2 == null && state.selectedIndex != index) {
       state = state.copyWith(selectedIndex2: index);
+      await compareCards();
     }
+  }
 
+  Future<void> compareCards() async {
     if (state.selectedIndex != null && state.selectedIndex2 != null) {
       state = state.copyWith(attempts: state.attempts + 1);
-      if (state.countriesInGame[state.selectedIndex!].country ==
-          state.countriesInGame[state.selectedIndex2!].country) {
-        await audioPlayer.play(AssetSource("sound/success.mp3"));
-        Future.delayed(const Duration(seconds: 1), () {
-          state = state.copyWith(
-            discoveredIndexes: [
-              ...state.discoveredIndexes,
-              state.selectedIndex!,
-              state.selectedIndex2!
-            ],
-          ).copyWithoutSelectedIndexes();
+      final isEqualCard = state.countriesInGame[state.selectedIndex!].country ==
+          state.countriesInGame[state.selectedIndex2!].country;
+      if (isEqualCard) {
+        Future.delayed(const Duration(seconds: 1), () async {
+          addDiscoveredCard();
         });
       } else {
         Future.delayed(const Duration(seconds: 1), () {
@@ -71,26 +70,17 @@ class PairsController extends StateNotifier<PairsState> {
     }
   }
 
-  void updateRemainingSeconds(int seconds) {
-    state = state.copyWith(remainingSeconds: seconds);
+  void addDiscoveredCard() {
+    state = state.copyWith(
+      discoveredIndexes: [
+        ...state.discoveredIndexes,
+        state.selectedIndex!,
+        state.selectedIndex2!
+      ],
+    ).copyWithoutSelectedIndexes();
   }
 
   void resetGame() {
-    final oldDifficulty = state.difficulty;
-    selectDifficulty(oldDifficulty);
-  }
-
-  int calculateScore() {
-    final maxSeconds = state.difficulty.secondsDuration;
-    final remainingSeconds = state.remainingSeconds;
-    final attempts = state.attempts;
-
-    if (attempts == 0 || maxSeconds == 0) return 0;
-
-    final timeFactor = (remainingSeconds / maxSeconds).clamp(0, 1);
-    final attemptFactor = (1 / attempts).clamp(0, 1);
-
-    final score = (timeFactor * 0.5 + attemptFactor * 0.5) * 100;
-    return score.round();
+    shuffleGameCards();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/components/custom_dialog.dart';
@@ -20,13 +21,20 @@ class HomePairsPage extends ConsumerStatefulWidget {
 
 class _HomePairsPageState extends ConsumerState<HomePairsPage> {
   late GameTimerController _gameTimerController;
+  late AudioPlayer audioPlayer;
   @override
   void initState() {
-    final initialTime = ref
-        .read(pairsProvider.select((state) => state.difficulty))
-        .secondsDuration;
-    _gameTimerController = GameTimerController(initialTime: initialTime);
+    audioPlayer = AudioPlayer();
+    initializeGameTimer();
+    listenWhenGameIsFinished();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _gameTimerController.stop();
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,11 +66,6 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
             actions: [
               GameTimer(
                 controller: _gameTimerController,
-                onTimerTick: (remainingSeconds) {
-                  ref
-                      .read(pairsProvider.notifier)
-                      .updateRemainingSeconds(remainingSeconds);
-                },
                 onTimerEnd: () => onTimerEnd(context, ref),
               ),
             ],
@@ -74,7 +77,57 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
     );
   }
 
+  void initializeGameTimer() {
+    final initialTime = ref
+        .read(pairsProvider.select((state) => state.difficulty))
+        .secondsDuration;
+    _gameTimerController = GameTimerController(initialTime: initialTime);
+  }
+
+  void listenWhenGameIsFinished() {
+    ref.read(pairsProvider.notifier).addListener((state) async {
+      if (state.isGameFinished) {
+        _gameTimerController.stop();
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            return CustomDialog(
+              actionLeft: ButtonAction(
+                buttonStyle: ButtonStyleType.outline,
+                text: 'Exit',
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
+              actionRight: ButtonAction(
+                buttonStyle: ButtonStyleType.material,
+                text: 'Play again',
+                onPressed: () {
+                  Navigator.pop(context);
+                  ref.read(pairsProvider.notifier).resetGame();
+                  _gameTimerController
+                      .setTime(state.difficulty.secondsDuration);
+                  _gameTimerController.start();
+                },
+              ),
+              text: 'You won! \n'
+                  'You made ${state.attempts} attempts in ${state.difficulty.label} mode.',
+            );
+          },
+        );
+        await audioPlayer.play(AssetSource("sound/crowd-cheers.mp3"));
+      }
+      if (state.isEqualCard) {
+        await audioPlayer.play(AssetSource("sound/success.mp3"));
+      }
+    });
+  }
+
   void onTimerEnd(BuildContext context, WidgetRef ref) {
+    audioPlayer.play(AssetSource("sound/boo.mp3"));
+
     showDialog(
         barrierDismissible: false,
         context: context,

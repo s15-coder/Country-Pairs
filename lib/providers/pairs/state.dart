@@ -8,7 +8,6 @@ class PairsState {
   final int? selectedIndex;
   final int? selectedIndex2;
   final int attempts;
-  final int remainingSeconds;
 
   const PairsState({
     required this.countriesInGame,
@@ -17,7 +16,6 @@ class PairsState {
     required this.selectedIndex2,
     required this.discoveredIndexes,
     this.attempts = 0,
-    this.remainingSeconds = 0,
   });
   PairsState copyWith({
     List<Country>? countriesInGame,
@@ -26,7 +24,6 @@ class PairsState {
     int? selectedIndex2,
     List<int>? discoveredIndexes,
     int? attempts,
-    int? remainingSeconds,
   }) {
     return PairsState(
       countriesInGame: countriesInGame ?? this.countriesInGame,
@@ -35,7 +32,6 @@ class PairsState {
       selectedIndex2: selectedIndex2 ?? this.selectedIndex2,
       discoveredIndexes: discoveredIndexes ?? this.discoveredIndexes,
       attempts: attempts ?? this.attempts,
-      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
     );
   }
 
@@ -47,8 +43,30 @@ class PairsState {
       selectedIndex2: null,
       attempts: attempts,
       discoveredIndexes: discoveredIndexes,
-      remainingSeconds: remainingSeconds,
     );
+  }
+
+  bool get isGameFinished {
+    return discoveredIndexes.length == countriesInGame.length &&
+        discoveredIndexes.isNotEmpty;
+  }
+
+  bool get isEqualCard {
+    if (selectedIndex == null || selectedIndex2 == null) return false;
+    return countriesInGame[selectedIndex!].country ==
+        countriesInGame[selectedIndex2!].country;
+  }
+
+  int score(int remainingSeconds) {
+    final maxSeconds = difficulty.secondsDuration;
+
+    if (attempts == 0 || maxSeconds == 0) return 0;
+
+    final timeFactor = (remainingSeconds / maxSeconds).clamp(0, 1);
+    final attemptFactor = (1 / attempts).clamp(0, 1);
+
+    final finalScore = (timeFactor * 0.5 + attemptFactor * 0.5) * 100;
+    return finalScore.round();
   }
 
   PairsState.initial()
@@ -57,6 +75,5 @@ class PairsState {
         selectedIndex = null,
         discoveredIndexes = [],
         attempts = 0,
-        remainingSeconds = 0,
         selectedIndex2 = null;
 }

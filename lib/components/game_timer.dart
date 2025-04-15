@@ -27,11 +27,11 @@ class GameTimer extends StatefulWidget {
     super.key,
     required this.controller,
     required this.onTimerEnd,
-    required this.onTimerTick,
+    this.onTimerTick,
   });
   final GameTimerController controller;
   final VoidCallback onTimerEnd;
-  final Function(int) onTimerTick;
+  final Function(int)? onTimerTick;
 
   @override
   _GameTimerState createState() => _GameTimerState();
@@ -57,7 +57,9 @@ class _GameTimerState extends State<GameTimer> {
       if (remainingTime > 0) {
         setState(() {
           remainingTime--;
-          widget.onTimerTick(remainingTime);
+          if (widget.onTimerTick != null) {
+            widget.onTimerTick!(remainingTime);
+          }
         });
       } else {
         timer.cancel();
