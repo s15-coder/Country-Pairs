@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
 
 class PlayerNameField extends StatefulWidget {
-  const PlayerNameField({super.key});
-
+  const PlayerNameField(
+      {required this.initialName, required this.onNameChanged, super.key});
+  final String initialName;
+  final Function(String) onNameChanged;
   @override
   State<PlayerNameField> createState() => _PlayerNameFieldState();
 }
 
 class _PlayerNameFieldState extends State<PlayerNameField> {
   bool editing = false;
-  String playerName = "Player 1";
   late TextEditingController playerNameController;
   late FocusNode playerNameFocusNode;
   @override
   void initState() {
-    playerNameController = TextEditingController();
+    playerNameController = TextEditingController(text: widget.initialName);
     playerNameFocusNode = FocusNode();
-    playerNameController.text = playerName;
     super.initState();
   }
 
@@ -33,12 +33,12 @@ class _PlayerNameFieldState extends State<PlayerNameField> {
       editing = !editing;
     });
     Future.delayed(
-      const Duration(milliseconds: 100),
+      const Duration(milliseconds: 200),
       () {
         if (editing) {
           playerNameFocusNode.requestFocus();
         } else {
-          playerName = playerNameController.text;
+          widget.onNameChanged(playerNameController.text);
           playerNameFocusNode.unfocus();
         }
       },

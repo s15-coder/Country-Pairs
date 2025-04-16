@@ -11,6 +11,7 @@ import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/models/button_action.dart';
 import 'package:pairs_game/models/difficulty.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
+import 'package:pairs_game/providers/scores/provider.dart';
 
 class HomePairsPage extends ConsumerStatefulWidget {
   const HomePairsPage({super.key});
@@ -94,11 +95,14 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
     ref.read(pairsProvider.notifier).addListener((state) async {
       if (state.didYouWin) {
         _gameTimerController.stop();
+        final score = state.score(remainingSeconds);
+        ref.read(scoresControllerProvider.notifier).saveScore(score);
         showDialog(
           barrierDismissible: false,
           context: context,
           builder: (_) {
             return YouWontDialog(
+              score: score,
               onExit: () {
                 Navigator.pop(context);
                 Navigator.pop(context);

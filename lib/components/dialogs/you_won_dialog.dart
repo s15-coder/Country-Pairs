@@ -10,10 +10,12 @@ class YouWontDialog extends StatelessWidget {
     required this.onPlayAgain,
     required this.state,
     required this.remainingSeconds,
+    required this.score,
   });
   final VoidCallback onExit;
   final VoidCallback onPlayAgain;
   final PairsState state;
+  final int score;
   final int remainingSeconds;
   final titleStyle = const TextStyle(
     color: Colors.white,
@@ -46,7 +48,7 @@ class YouWontDialog extends StatelessWidget {
           Text(
             'Attempts: ${state.attempts}\n'
             'Time: ${state.difficulty.secondsDuration - remainingSeconds} left\n'
-            'Score: ${state.score(remainingSeconds)}%',
+            'Score: $score%',
             style: titleStyle,
             textAlign: TextAlign.start,
           ),

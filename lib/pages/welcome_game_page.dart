@@ -6,6 +6,7 @@ import 'package:pairs_game/components/welcome_button.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/pages/home_pairs_page.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
+import 'package:pairs_game/providers/scores/provider.dart';
 
 class WelcomeGamePage extends ConsumerWidget {
   const WelcomeGamePage({super.key});
@@ -13,51 +14,63 @@ class WelcomeGamePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final difficulty = ref.watch(pairsProvider.select((e) => e.difficulty));
-    return Center(
-      child: Scaffold(
-        backgroundColor: UIColors.darkGray,
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-                Image.asset(
-                  "assets/app/world_icon.png",
-                  width: 200,
-                ),
-                const SizedBox(height: 24),
-                PlayerNameField(),
-                WelcomeButton(
-                  onPressed: () {
-                    ref.read(pairsProvider.notifier).shuffleGameCards();
-                    Navigator.pushNamed(
-                      context,
-                      HomePairsPage.routeName,
-                    );
-                  },
-                  text: "Start Game",
-                ),
-                WelcomeButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      backgroundColor: UIColors.darkGray,
-                      context: context,
-                      builder: (context) {
-                        return const DifficultyOptions();
-                      },
-                    );
-                  },
-                  text: "Difficulty: ${difficulty.label} ",
-                ),
-                WelcomeButton(
-                  onPressed: () {},
-                  text: "Scores",
-                ),
-              ],
-            ),
+
+    return Scaffold(
+      backgroundColor: UIColors.darkGray,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 100,
+              ),
+              Image.asset(
+                "assets/app/world_icon.png",
+                width: 200,
+              ),
+              const SizedBox(height: 24),
+              PlayerNameField(
+                initialName: ref.read(scoresControllerProvider
+                    .select((state) => state.playerName)),
+                onNameChanged: (name) {
+                  ref
+                      .read(scoresControllerProvider.notifier)
+                      .setPlayerName(name);
+                },
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  ref.read(pairsProvider.notifier).shuffleGameCards();
+                  Navigator.pushNamed(
+                    context,
+                    HomePairsPage.routeName,
+                  );
+                },
+                text: "Start Game",
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    backgroundColor: UIColors.darkGray,
+                    context: context,
+                    builder: (context) {
+                      return const DifficultyOptions();
+                    },
+                  );
+                },
+                text: "Difficulty: ${difficulty.label} ",
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/scores",
+                  );
+                },
+                text: "Scores",
+              ),
+            ],
           ),
         ),
       ),
