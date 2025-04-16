@@ -1,7 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/components/custom_dialog.dart';
+import 'package:pairs_game/components/dialogs/custom_dialog.dart';
+import 'package:pairs_game/components/dialogs/time_is_up_dialog.dart';
+import 'package:pairs_game/components/dialogs/you_won_dialog.dart';
 import 'package:pairs_game/components/game_timer.dart';
 import 'package:pairs_game/components/home_bottom_navigator.dart';
 import 'package:pairs_game/components/pairs_grid.dart';
@@ -22,6 +24,7 @@ class HomePairsPage extends ConsumerStatefulWidget {
 class _HomePairsPageState extends ConsumerState<HomePairsPage> {
   late GameTimerController _gameTimerController;
   late AudioPlayer audioPlayer;
+  int remainingSeconds = 0;
   @override
   void initState() {
     audioPlayer = AudioPlayer();
@@ -67,6 +70,9 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
               GameTimer(
                 controller: _gameTimerController,
                 onTimerEnd: () => onTimerEnd(context, ref),
+                onTimerTick: (remainingTime) {
+                  remainingSeconds = remainingTime;
+                },
               ),
             ],
           ),
@@ -86,34 +92,25 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
 
   void listenWhenGameIsFinished() {
     ref.read(pairsProvider.notifier).addListener((state) async {
-      if (state.isGameFinished) {
+      if (state.didYouWin) {
         _gameTimerController.stop();
         showDialog(
           barrierDismissible: false,
           context: context,
           builder: (_) {
-            return CustomDialog(
-              actionLeft: ButtonAction(
-                buttonStyle: ButtonStyleType.outline,
-                text: 'Exit',
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-              ),
-              actionRight: ButtonAction(
-                buttonStyle: ButtonStyleType.material,
-                text: 'Play again',
-                onPressed: () {
-                  Navigator.pop(context);
-                  ref.read(pairsProvider.notifier).resetGame();
-                  _gameTimerController
-                      .setTime(state.difficulty.secondsDuration);
-                  _gameTimerController.start();
-                },
-              ),
-              text: 'You won! \n'
-                  'You made ${state.attempts} attempts in ${state.difficulty.label} mode.',
+            return YouWontDialog(
+              onExit: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              onPlayAgain: () {
+                Navigator.pop(context);
+                ref.read(pairsProvider.notifier).resetGame();
+                _gameTimerController.setTime(state.difficulty.secondsDuration);
+                _gameTimerController.start();
+              },
+              state: state,
+              remainingSeconds: remainingSeconds,
             );
           },
         );
@@ -129,32 +126,25 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
     audioPlayer.play(AssetSource("sound/boo.mp3"));
 
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) {
-          return CustomDialog(
-            actionLeft: ButtonAction(
-              buttonStyle: ButtonStyleType.outline,
-              text: 'Exit',
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-            actionRight: ButtonAction(
-              buttonStyle: ButtonStyleType.material,
-              text: 'Try again',
-              onPressed: () {
-                Navigator.pop(context);
-                ref.read(pairsProvider.notifier).resetGame();
-                final state = ref.read(pairsProvider);
-                _gameTimerController.setTime(state.difficulty.secondsDuration);
-                _gameTimerController.start();
-              },
-            ),
-            text: 'Time is up!',
-          );
-        });
+      barrierDismissible: false,
+      context: context,
+      builder: (_) {
+        return TimeIsUpDialog(
+          onExit: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+          onPlayAgain: () {
+            Navigator.pop(context);
+            ref.read(pairsProvider.notifier).resetGame();
+            _gameTimerController.setTime(ref
+                .read(pairsProvider.select((state) => state.difficulty))
+                .secondsDuration);
+            _gameTimerController.start();
+          },
+        );
+      },
+    );
   }
 
   void onArrowBackPressed(BuildContext context) {

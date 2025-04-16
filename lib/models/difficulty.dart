@@ -2,7 +2,7 @@ import 'package:pairs_game/models/grid_layout.dart';
 
 enum Difficulty {
   easy(
-    cardsAmount: 6,
+    pairsAmount: 6,
     label: 'Easy',
     gridLayout: GridLayout(
       xItems: 3,
@@ -11,7 +11,7 @@ enum Difficulty {
     secondsDuration: 60,
   ),
   medium(
-    cardsAmount: 10,
+    pairsAmount: 10,
     label: 'Medium',
     gridLayout: GridLayout(
       xItems: 4,
@@ -20,7 +20,7 @@ enum Difficulty {
     secondsDuration: 70,
   ),
   hard(
-    cardsAmount: 15,
+    pairsAmount: 15,
     label: 'Hard',
     gridLayout: GridLayout(
       xItems: 5,
@@ -29,7 +29,7 @@ enum Difficulty {
     secondsDuration: 80,
   ),
   expert(
-    cardsAmount: 20,
+    pairsAmount: 20,
     label: 'Expert',
     gridLayout: GridLayout(
       xItems: 5,
@@ -40,12 +40,12 @@ enum Difficulty {
   ;
 
   const Difficulty({
-    required this.cardsAmount,
+    required this.pairsAmount,
     required this.label,
     required this.gridLayout,
     required this.secondsDuration,
   });
-  final int cardsAmount;
+  final int pairsAmount;
   final String label;
   final GridLayout gridLayout;
   final int secondsDuration;

@@ -16,11 +16,13 @@ class PairsController extends StateNotifier<PairsState> {
   }
 
   void shuffleGameCards() {
-    state = PairsState.initial();
+    state = PairsState.initial().copyWith(
+      difficulty: state.difficulty,
+    );
     List<dynamic> countriesCopy = [...countries];
     countriesCopy.shuffle();
     countriesCopy = countriesCopy
-        .take(state.difficulty.cardsAmount)
+        .take(state.difficulty.pairsAmount)
         .map(
           (e) => Country.fromJson(e),
         )
