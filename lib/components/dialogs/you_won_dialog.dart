@@ -15,6 +15,11 @@ class YouWontDialog extends StatelessWidget {
   final VoidCallback onPlayAgain;
   final PairsState state;
   final int remainingSeconds;
+  final titleStyle = const TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
@@ -28,17 +33,24 @@ class YouWontDialog extends StatelessWidget {
         text: 'Play again',
         onPressed: onPlayAgain,
       ),
-      child: Text(
-        'You won! \n'
-        'Attempts: ${state.attempts}\n'
-        'Time: ${state.difficulty.secondsDuration - remainingSeconds} left\n'
-        'Score: ${state.score(remainingSeconds)}%',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.start,
+      child: Column(
+        children: [
+          Text(
+            'You won! ',
+            style: titleStyle.copyWith(),
+            textAlign: TextAlign.center,
+          ),
+          Divider(
+            color: Colors.white,
+          ),
+          Text(
+            'Attempts: ${state.attempts}\n'
+            'Time: ${state.difficulty.secondsDuration - remainingSeconds} left\n'
+            'Score: ${state.score(remainingSeconds)}%',
+            style: titleStyle,
+            textAlign: TextAlign.start,
+          ),
+        ],
       ),
     );
   }

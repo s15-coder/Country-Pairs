@@ -26,7 +26,7 @@ enum Difficulty {
       xItems: 5,
       yItems: 6,
     ),
-    secondsDuration: 80,
+    secondsDuration: 85,
   ),
   expert(
     pairsAmount: 20,
@@ -35,7 +35,7 @@ enum Difficulty {
       xItems: 5,
       yItems: 8,
     ),
-    secondsDuration: 90,
+    secondsDuration: 100,
   ),
   ;
 

@@ -34,7 +34,7 @@ class GameTimer extends StatefulWidget {
   final Function(int)? onTimerTick;
 
   @override
-  _GameTimerState createState() => _GameTimerState();
+  State<GameTimer> createState() => _GameTimerState();
 }
 
 class _GameTimerState extends State<GameTimer> {
