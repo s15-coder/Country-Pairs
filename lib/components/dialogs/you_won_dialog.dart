@@ -47,7 +47,7 @@ class YouWontDialog extends StatelessWidget {
           ),
           Text(
             'Attempts: ${state.attempts}\n'
-            'Time: ${state.difficulty.secondsDuration - remainingSeconds} left\n'
+            'Time: ${state.difficulty.secondsDuration - remainingSeconds}s spent\n'
             'Score: $score%',
             style: titleStyle,
             textAlign: TextAlign.start,

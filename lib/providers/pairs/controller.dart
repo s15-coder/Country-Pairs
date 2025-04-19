@@ -60,15 +60,13 @@ class PairsController extends StateNotifier<PairsState> {
       state = state.copyWith(attempts: state.attempts + 1);
       final isEqualCard = state.countriesInGame[state.selectedIndex!].country ==
           state.countriesInGame[state.selectedIndex2!].country;
-      if (isEqualCard) {
-        Future.delayed(const Duration(seconds: 1), () async {
+      Future.delayed(const Duration(seconds: 1), () async {
+        if (isEqualCard) {
           addDiscoveredCard();
-        });
-      } else {
-        Future.delayed(const Duration(seconds: 1), () {
+        } else {
           state = state.copyWithoutSelectedIndexes();
-        });
-      }
+        }
+      });
     }
   }
 

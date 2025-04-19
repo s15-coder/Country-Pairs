@@ -11,6 +11,7 @@ import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/models/button_action.dart';
 import 'package:pairs_game/models/difficulty.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
+import 'package:pairs_game/providers/pairs/state.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 
 class HomePairsPage extends ConsumerStatefulWidget {
@@ -30,7 +31,6 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
   void initState() {
     audioPlayer = AudioPlayer();
     initializeGameTimer();
-    listenWhenGameIsFinished();
     super.initState();
   }
 
@@ -43,8 +43,13 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<PairsState>(
+      pairsProvider,
+      listenWhenGameIsFinished,
+    );
     final Difficulty difficulty =
         ref.watch(pairsProvider.select((state) => state.difficulty));
+
     return SafeArea(
       child: PopScope(
         canPop: false,
@@ -91,39 +96,53 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
     _gameTimerController = GameTimerController(initialTime: initialTime);
   }
 
-  void listenWhenGameIsFinished() {
-    ref.read(pairsProvider.notifier).addListener((state) async {
-      if (state.didYouWin) {
-        _gameTimerController.stop();
-        final score = state.score(remainingSeconds);
-        ref.read(scoresControllerProvider.notifier).saveScore(score);
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) {
-            return YouWontDialog(
-              score: score,
-              onExit: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              onPlayAgain: () {
-                Navigator.pop(context);
-                ref.read(pairsProvider.notifier).resetGame();
-                _gameTimerController.setTime(state.difficulty.secondsDuration);
-                _gameTimerController.start();
-              },
-              state: state,
-              remainingSeconds: remainingSeconds,
-            );
-          },
-        );
-        await audioPlayer.play(AssetSource("sound/crowd-cheers.mp3"));
-      }
-      if (state.isEqualCard) {
-        await audioPlayer.play(AssetSource("sound/success.mp3"));
-      }
-    });
+  void listenWhenGameIsFinished(
+    PairsState? oldState,
+    PairsState currentState,
+  ) async {
+    final didUserWin = oldState?.didYouWin != currentState.didYouWin;
+
+    if (didUserWin) {
+      _gameTimerController.stop();
+      final score = currentState.score(remainingSeconds);
+      ref.read(scoresControllerProvider.notifier).saveScore(score);
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return YouWontDialog(
+            score: score,
+            onExit: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            onPlayAgain: () {
+              Navigator.pop(context);
+              ref.read(pairsProvider.notifier).resetGame();
+              _gameTimerController
+                  .setTime(currentState.difficulty.secondsDuration);
+              _gameTimerController.start();
+            },
+            state: currentState,
+            remainingSeconds: remainingSeconds,
+          );
+        },
+      );
+      await audioPlayer.play(AssetSource("sound/crowd-cheers.mp3"));
+      return;
+    }
+    if (oldState?.isEqualCard != currentState.isEqualCard &&
+        currentState.isEqualCard) {
+      final state = ref.read(pairsProvider);
+      final currentCard = state.countriesInGame[state.selectedIndex ?? 0];
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(currentCard.country),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      await audioPlayer.play(AssetSource("sound/success.mp3"));
+    }
   }
 
   void onTimerEnd(BuildContext context, WidgetRef ref) {

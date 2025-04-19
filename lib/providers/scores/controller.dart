@@ -24,4 +24,8 @@ class ScoresController extends StateNotifier<ScoresState> {
   void setPlayerName(String name) {
     state = state.copyWith(playerName: name);
   }
+
+  void setFilter(String filter) {
+    state = state.copyWith(filter: filter);
+  }
 }
