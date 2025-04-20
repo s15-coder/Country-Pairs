@@ -26,7 +26,7 @@ class WelcomeGamePage extends ConsumerWidget {
                 height: 100,
               ),
               Image.asset(
-                "assets/app/world_icon.png",
+                "assets/app/icon_pair.png",
                 width: 200,
               ),
               const SizedBox(height: 24),

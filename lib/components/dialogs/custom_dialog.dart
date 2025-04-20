@@ -30,7 +30,7 @@ class CustomDialog extends StatelessWidget {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 if (text != null)
                   Text(
                     text!,
@@ -94,19 +94,6 @@ class CustomDialog extends StatelessWidget {
                   ],
                 ),
               ],
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              left: 0,
-              child: Transform.translate(
-                offset: const Offset(0, -60),
-                child: Image.asset(
-                  'assets/app/world_icon.png',
-                  height: 80,
-                  width: 80,
-                ),
-              ),
             ),
           ],
         ),
