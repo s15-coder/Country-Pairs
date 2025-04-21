@@ -52,6 +52,9 @@ class WelcomeGamePage extends ConsumerWidget {
               WelcomeButton(
                 onPressed: () {
                   showModalBottomSheet(
+                    constraints: const BoxConstraints(
+                      maxWidth: double.infinity,
+                    ),
                     backgroundColor: UIColors.darkGray,
                     context: context,
                     builder: (context) {
