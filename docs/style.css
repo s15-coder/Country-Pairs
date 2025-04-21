@@ -1,0 +1,80 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.header__top {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    display: inline-block;
+}
+
+.app_icon {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+}
+
+.stores_container {
+    padding: 30px;
+    background-color: white;
+}
+
+main {
+    height: 100%;
+    background-color: #F6F6F6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+main>h1 {
+    padding: 20px;
+}
+
+main>p {
+    padding: 20px;
+    max-width: 600px;
+    text-align: center;
+}
+
+.text_button {
+    width: fit-content;
+    margin: 0px 8px;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 16px;
+    border: 2px solid black;
+    background-color: transparent;
+    color: black;
+    cursor: pointer;
+    animation-duration: 1s;
+}
+
+.text_button:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    box-shadow: 10px 5px 5px rgb(73, 73, 73)ck;
+}
+
+@media screen and (max-width: 600px) {
+    #signUpBtn {
+        display: none;
+    }
+}

@@ -18,6 +18,17 @@ class _PlayerNameFieldState extends State<PlayerNameField> {
   void initState() {
     playerNameController = TextEditingController(text: widget.initialName);
     playerNameFocusNode = FocusNode();
+    playerNameFocusNode.addListener(() {
+      if (playerNameFocusNode.hasFocus) {
+        setState(() {
+          editing = true;
+        });
+      } else {
+        setState(() {
+          editing = false;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -28,21 +39,18 @@ class _PlayerNameFieldState extends State<PlayerNameField> {
     super.dispose();
   }
 
-  toggleEditing() {
+  toggleEditing() async {
     setState(() {
       editing = !editing;
     });
-    Future.delayed(
-      const Duration(milliseconds: 200),
-      () {
-        if (editing) {
-          playerNameFocusNode.requestFocus();
-        } else {
-          widget.onNameChanged(playerNameController.text);
-          playerNameFocusNode.unfocus();
-        }
-      },
-    );
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (editing) {
+      playerNameFocusNode.requestFocus();
+    } else {
+      widget.onNameChanged(playerNameController.text);
+      playerNameFocusNode.unfocus();
+    }
   }
 
   @override
@@ -55,7 +63,7 @@ class _PlayerNameFieldState extends State<PlayerNameField> {
               child: Stack(
             children: [
               TextField(
-                enabled: editing,
+                enabled: true,
                 focusNode: playerNameFocusNode,
                 controller: playerNameController,
                 onSubmitted: (value) {
