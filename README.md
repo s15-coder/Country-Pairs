@@ -53,3 +53,67 @@ flutter pub get
 # Run the app
 flutter run
 ```
+
+# 🗂️ Folder Structure
+
+```bash
+├── components/      # Reusable UI widgets
+├── constants/       # Static values and configurations
+├── main.dart        # App entry point
+├── models/          # Data models
+├── pages/           # App screens/pages
+├── providers/       # State management
+├── services/        # Data handling and utilities
+```
+
+# 📦 DependenciesMain:
+
+Main
+
+- flutter
+
+- flutter_riverpod – State management
+
+- audioplayers – Audio playback
+
+- cupertino_icons – iOS-style icons
+
+- hive – Lightweight key-value database
+
+- hive_flutter – Hive support for Flutter
+
+- path_provider – File storage paths
+
+Dev:
+
+- flutter_test – Flutter testing framework
+
+- hive_generator – Hive model generator
+
+- build_runner – Code generation tool
+
+- flutter_lints – Recommended lint rules
+
+- flutter_launcher_icons – Generate app icons
+
+# 🛠️ How to Use
+
+1. Launch the app on your iOS or Android device.
+
+2. Choose a difficulty level.
+
+3. Set your player name.
+
+4. Start matching flag pairs!
+
+View your score at the end and try to beat it next time!
+
+# 🔌 API Reference
+
+This app currently does not use external APIs. All data (flags, scores) is handled locally on the device.
+
+🤝 Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your improvements. For major changes, open an issue first to discuss what you’d like to change.
+
+📄 License
+This project is licensed under the MIT License. See the LICENSE file for details.
