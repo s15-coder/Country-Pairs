@@ -54,7 +54,7 @@ flutter pub get
 flutter run
 ```
 
-# 🗂️ Folder Structure
+## 🗂️ Folder Structure
 
 ```bash
 ├── components/      # Reusable UI widgets
@@ -66,7 +66,7 @@ flutter run
 ├── services/        # Data handling and utilities
 ```
 
-# 📦 DependenciesMain:
+## 📦 DependenciesMain:
 
 Main
 
@@ -96,7 +96,7 @@ Dev:
 
 - flutter_launcher_icons – Generate app icons
 
-# 🛠️ How to Use
+## 🛠️ How to Use
 
 1. Launch the app on your iOS or Android device.
 
@@ -108,7 +108,7 @@ Dev:
 
 View your score at the end and try to beat it next time!
 
-# 🔌 API Reference
+## 🔌 API Reference
 
 This app currently does not use external APIs. All data (flags, scores) is handled locally on the device.
 
