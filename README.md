@@ -9,12 +9,10 @@ A fun and educational mobile game designed for both iOS and Android devices. **C
 - [Overview](#-overview)
 - [Features](#-features)
 - [Installation](#-installation)
-- [Folder Structure](#-folder-structure)
+- [Folder Structure](#-Folder-Structure)
 - [Dependencies](#-dependencies)
-- [How to Use](#-how-to-use)
+- [How to Use](#how-to-use)
 - [API Reference](#-api-reference)
-- [Testing](#-testing)
-- [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -66,7 +64,7 @@ flutter run
 ├── services/        # Data handling and utilities
 ```
 
-## 📦 DependenciesMain:
+## 📦 Dependencies:
 
 Main
 
@@ -96,7 +94,7 @@ Dev:
 
 - flutter_launcher_icons – Generate app icons
 
-## 🛠️ How to Use
+## [🛠️ How to Use](#how-to-use)
 
 1. Launch the app on your iOS or Android device.
 
