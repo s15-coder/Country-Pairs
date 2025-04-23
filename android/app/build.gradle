@@ -1,27 +1,43 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+Properties keystoreProperties = new Properties();
+File keystorePropertiesFile = new File(rootProject.getProjectDir(), "key.properties");
+
+if (keystorePropertiesFile.exists()) {
+    try (FileInputStream fis = new FileInputStream(keystorePropertiesFile)) {
+        keystoreProperties.load(fis);
+    } catch (IOException e) {
+        e.printStackTrace(); // Manejo básico de errores
+    }
+}
 android {
     namespace = "com.example.pairs_game"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-
+    dependencies {
+        // ...
+        implementation("com.google.android.material:material:1.12.0")
+        // ...
+    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = 17
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.pairs_game"
+        applicationId = "com.countrypairs"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -29,13 +45,22 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
+    
+   signingConfigs {
+        create("release", config -> {
+            config.setKeyAlias((String) keystoreProperties.get("keyAlias"));
+            config.setKeyPassword((String) keystoreProperties.get("keyPassword"));
+            Object storeFilePath = keystoreProperties.get("storeFile");
+            if (storeFilePath != null) {
+                config.setStoreFile(new File((String) storeFilePath));
+            }
+            config.setStorePassword((String) keystoreProperties.get("storePassword"));
+        });
+    }
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
-        }
+        getByName("release", release -> {
+            release.setSigningConfig(signingConfigs.getByName("release"));
+        });
     }
 }
 
