@@ -9,10 +9,10 @@ A fun and educational mobile game designed for both iOS and Android devices. **C
 - [Overview](#-overview)
 - [Features](#-features)
 - [Installation](#-installation)
-- [Folder Structure](#-Folder-Structure)
+- [Folder Structure](#-older-Structure)
 - [Dependencies](#-dependencies)
-- [How to Use](#-how-to-use)
-- [API Reference](#-api-reference)
+- [How to Use](#how-to-use)
+- [API Reference](#api-reference)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -94,7 +94,7 @@ Dev:
 
 - flutter_launcher_icons – Generate app icons
 
-## [🛠️ How to Use](#-how-to-use)
+## How to Use
 
 1. Launch the app on your iOS or Android device.
 
@@ -106,12 +106,13 @@ Dev:
 
 View your score at the end and try to beat it next time!
 
-## 🔌 API Reference
+## API Reference
 
 This app currently does not use external APIs. All data (flags, scores) is handled locally on the device.
 
 🤝 Contributing
 Contributions are welcome! Please fork the repository and submit a pull request with your improvements. For major changes, open an issue first to discuss what you’d like to change.
 
-📄 License
+## 📄 License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
