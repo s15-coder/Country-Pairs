@@ -31,12 +31,10 @@ class WelcomeGamePage extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               PlayerNameField(
-                initialName: ref.read(scoresControllerProvider
-                    .select((state) => state.playerName)),
+                initialName: ref
+                    .watch(scoresProvider.select((state) => state.playerName)),
                 onNameChanged: (name) {
-                  ref
-                      .read(scoresControllerProvider.notifier)
-                      .setPlayerName(name);
+                  ref.read(scoresProvider.notifier).setPlayerName(name);
                 },
               ),
               WelcomeButton(

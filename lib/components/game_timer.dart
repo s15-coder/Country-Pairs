@@ -1,61 +1,41 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:pairs_game/utils/timer_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pairs_game/providers/timer/controller.dart';
+import 'package:pairs_game/providers/timer/provider.dart';
 
-class GameTimer extends StatefulWidget {
+class GameTimer extends ConsumerStatefulWidget {
   const GameTimer({
     super.key,
-    required this.controller,
-    required this.onTimerEnd,
-    this.onTimerTick,
   });
-  final TimerController controller;
-  final VoidCallback onTimerEnd;
-  final Function(int)? onTimerTick;
 
   @override
-  State<GameTimer> createState() => _GameTimerState();
+  ConsumerState<GameTimer> createState() => _GameTimerState();
 }
 
-class _GameTimerState extends State<GameTimer> {
-  late int remainingTime;
+class _GameTimerState extends ConsumerState<GameTimer> {
   Timer? _timer;
-
+  TimerController get _timerController => ref.read(timerProvider.notifier);
   @override
   void initState() {
     super.initState();
-    remainingTime = widget.controller.initialTime; // Default initial time
-    startTimer();
-    widget.controller.onStart = startTimer;
-    widget.controller.onStop = stopTimer;
-    widget.controller.onSetTime = setTime;
+    final timerState = ref.read(timerProvider);
+    if (timerState.isRunning) {
+      startTimer();
+    } else {
+      stopTimer();
+    }
   }
 
   void startTimer() {
-    stopTimer(); // Ensure no duplicate timers
+    stopTimer();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (remainingTime > 0) {
-        setState(() {
-          remainingTime--;
-          if (widget.onTimerTick != null) {
-            widget.onTimerTick!(remainingTime);
-          }
-        });
-      } else {
-        timer.cancel();
-        widget.onTimerEnd();
-      }
+      _timerController.onSecondPassed();
     });
   }
 
   void stopTimer() {
     _timer?.cancel();
-  }
-
-  void setTime(int time) {
-    setState(() {
-      remainingTime = time;
-    });
   }
 
   @override
@@ -66,13 +46,22 @@ class _GameTimerState extends State<GameTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final remainingSeconds = ref.watch(timerProvider).remainingSeconds;
+    ref.listen(timerProvider, (previous, next) {
+      if (previous?.isRunning == true && next.isRunning == false) {
+        stopTimer();
+      }
+      if (previous?.isRunning == false && next.isRunning == true) {
+        startTimer();
+      }
+    });
     return Container(
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 8,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
       ),
       child: Row(
@@ -84,7 +73,7 @@ class _GameTimerState extends State<GameTimer> {
           ),
           const SizedBox(width: 10),
           Text(
-            '$remainingTime',
+            '$remainingSeconds s',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
