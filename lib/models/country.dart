@@ -1,35 +1,35 @@
 class Country {
-  final String country;
-  final String flagImageUrl;
-  final int population;
-  final int areaKm2;
-  final String countryCode;
+  final String name;
+  final String flagPngUrl;
+  final String flagEmoji;
+  final String cca3;
 
   Country({
-    required this.country,
-    required this.flagImageUrl,
-    required this.population,
-    required this.areaKm2,
-    required this.countryCode,
+    required this.name,
+    required this.flagPngUrl,
+    required this.flagEmoji,
+    required this.cca3,
   });
-
   factory Country.fromJson(Map<String, dynamic> json) {
+    final name = json['name']?['common'] ?? '';
+    final flagPngUrl = json['flags']?['png'] ?? '';
+    final flagEmoji = json['flag'] ?? '';
+    final cca3 = json['cca3'] ?? '';
+
     return Country(
-      country: json['country'],
-      flagImageUrl: json['flag_image_url'],
-      population: json['population'],
-      areaKm2: json['area_km2'],
-      countryCode: json['country_code'],
+      name: name,
+      flagPngUrl: flagPngUrl,
+      flagEmoji: flagEmoji,
+      cca3: cca3,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'country': country,
-      'flag_image_url': flagImageUrl,
-      'population': population,
-      'area_km2': areaKm2,
-      'country_code': countryCode,
+      'name': name,
+      'flagPngUrl': flagPngUrl,
+      'flagEmoji': flagEmoji,
+      'cca3': cca3,
     };
   }
 }

@@ -5,14 +5,14 @@ class PairItem extends StatelessWidget {
   const PairItem({
     super.key,
     required this.width,
-    required this.countryCode,
+    required this.imageUrl,
     required this.isFlipped,
     required this.isDiscovered,
     required this.onTap,
   });
 
   final double width;
-  final String countryCode;
+  final String imageUrl;
   final bool isFlipped;
   final bool isDiscovered;
   final VoidCallback onTap;
@@ -27,8 +27,8 @@ class PairItem extends StatelessWidget {
                 SizedBox(
                   width: width,
                   height: width,
-                  child: Image.asset(
-                    'assets/flags/$countryCode.png',
+                  child: Image.network(
+                    imageUrl,
                     fit: BoxFit.fill,
                   ),
                 ),

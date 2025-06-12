@@ -1,38 +1,58 @@
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/constants/countries.dart';
+import 'package:pairs_game/constants/country_codes.dart';
 import 'package:pairs_game/models/country.dart';
 import 'package:pairs_game/models/difficulty.dart';
+import 'package:pairs_game/providers/pairs/repository.dart';
 import 'package:pairs_game/providers/pairs/state.dart';
 
 class PairsController extends StateNotifier<PairsState> {
   final Ref ref;
-  late AudioPlayer audioPlayer;
-  PairsController(this.ref) : super(PairsState.initial()) {
-    audioPlayer = AudioPlayer();
-  }
+  PairsController(this.ref) : super(PairsState.initial());
+
   void updateDifficulty(Difficulty difficulty) {
     state = state.copyWith(difficulty: difficulty);
   }
 
-  void shuffleGameCards() {
+  /// Shuffles the game cards and fetches new countries based on the difficulty.
+  ///
+  /// Resets the game state and handles loading/error states for country fetching.
+  Future<void> shuffleGameCards() async {
+    // Reset to initial state, preserving difficulty
     state = PairsState.initial().copyWith(
       difficulty: state.difficulty,
     );
-    List<dynamic> countriesCopy = [...countries];
-    countriesCopy.shuffle();
-    countriesCopy = countriesCopy
-        .take(state.difficulty.pairsAmount)
-        .map(
-          (e) => Country.fromJson(e),
-        )
-        .toList();
-    countriesCopy = [...countriesCopy, ...countriesCopy];
-    countriesCopy.shuffle();
-    state = state.copyWith(
-      difficulty: state.difficulty,
-      countriesInGame: countriesCopy.cast<Country>(),
-    );
+
+    // Shuffle the country codes and select a subset based on the difficulty
+    List<String> countryCodesCopy = List.from(countryCodes);
+    countryCodesCopy.shuffle();
+    countryCodesCopy =
+        countryCodesCopy.take(state.difficulty.pairsAmount).toList();
+
+    try {
+      state = state.copyWith(
+        getCountriesStatus: RequestStatus.loading,
+      );
+
+      List<Country> countriesInGame = await ref
+          .read(pairsRepositoryProvider)
+          .fetchCountries(countryCodesCopy);
+
+      // Duplicate the countries to create pairs
+      countriesInGame = [...countriesInGame, ...countriesInGame];
+      countriesInGame.shuffle();
+      state = state.copyWith(
+        countriesInGame: countriesInGame,
+        getCountriesStatus: RequestStatus.success,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        getCountriesStatus: RequestStatus.error,
+      );
+      if (kDebugMode) {
+        print('Error fetching countries: $e');
+      }
+    }
   }
 
   Future<void> selectCard(int index) async {
@@ -51,26 +71,35 @@ class PairsController extends StateNotifier<PairsState> {
       state = state.copyWith(selectedIndex: index);
     } else if (state.selectedIndex2 == null && state.selectedIndex != index) {
       state = state.copyWith(selectedIndex2: index);
-      await compareCards();
+      await _compareSelectedCards();
     }
   }
 
-  Future<void> compareCards() async {
-    if (state.selectedIndex != null && state.selectedIndex2 != null) {
-      state = state.copyWith(attempts: state.attempts + 1);
-      final isEqualCard = state.countriesInGame[state.selectedIndex!].country ==
-          state.countriesInGame[state.selectedIndex2!].country;
-      Future.delayed(const Duration(seconds: 1), () async {
-        if (isEqualCard) {
-          addDiscoveredCard();
-        } else {
-          state = state.copyWithoutSelectedIndexes();
-        }
-      });
+  Future<void> _compareSelectedCards() async {
+    if (state.selectedIndex == null || state.selectedIndex2 == null) {
+      return;
     }
+    state = state.copyWith(attempts: state.attempts + 1);
+    final areCardsMatched = state.countriesInGame[state.selectedIndex!].name ==
+        state.countriesInGame[state.selectedIndex2!].name;
+
+    // Add a delay to allow the UI show both selected cards before checking for a match
+    Future.delayed(const Duration(seconds: 1), () async {
+      if (areCardsMatched) {
+        _addDiscoveredCards();
+      } else {
+        state = state.copyWithoutSelectedIndexes();
+      }
+    });
   }
 
-  void addDiscoveredCard() {
+  /// Adds the currently selected cards to the list of discovered cards.
+  ///
+  /// Also resets the selected indexes after adding.
+  void _addDiscoveredCards() {
+    if (state.selectedIndex == null || state.selectedIndex2 == null) {
+      return;
+    }
     state = state.copyWith(
       discoveredIndexes: [
         ...state.discoveredIndexes,
@@ -82,5 +111,9 @@ class PairsController extends StateNotifier<PairsState> {
 
   void resetGame() {
     shuffleGameCards();
+  }
+
+  void resetSelectedIndexes() {
+    state = state.copyWithoutSelectedIndexes();
   }
 }

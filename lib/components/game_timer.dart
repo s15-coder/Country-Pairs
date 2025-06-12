@@ -1,26 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-
-class GameTimerController {
-  VoidCallback? onStart;
-  VoidCallback? onStop;
-  Function(int)? onSetTime;
-  final int initialTime;
-
-  GameTimerController({required this.initialTime});
-
-  void start() {
-    onStart?.call();
-  }
-
-  void stop() {
-    onStop?.call();
-  }
-
-  void setTime(int time) {
-    onSetTime?.call(time);
-  }
-}
+import 'package:pairs_game/utils/timer_controller.dart';
 
 class GameTimer extends StatefulWidget {
   const GameTimer({
@@ -29,7 +9,7 @@ class GameTimer extends StatefulWidget {
     required this.onTimerEnd,
     this.onTimerTick,
   });
-  final GameTimerController controller;
+  final TimerController controller;
   final VoidCallback onTimerEnd;
   final Function(int)? onTimerTick;
 
