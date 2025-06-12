@@ -32,7 +32,7 @@ class WelcomeGamePage extends ConsumerWidget {
               const SizedBox(height: 24),
               PlayerNameField(
                 initialName: ref
-                    .read(scoresProvider.select((state) => state.playerName)),
+                    .watch(scoresProvider.select((state) => state.playerName)),
                 onNameChanged: (name) {
                   ref.read(scoresProvider.notifier).setPlayerName(name);
                 },
