@@ -4,16 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/components/dialogs/custom_dialog.dart';
 import 'package:pairs_game/components/dialogs/time_is_up_dialog.dart';
 import 'package:pairs_game/components/dialogs/you_won_dialog.dart';
-import 'package:pairs_game/components/game_timer.dart';
-import 'package:pairs_game/components/home_bottom_navigator.dart';
-import 'package:pairs_game/components/pairs_grid.dart';
-import 'package:pairs_game/constants/ui_colors.dart';
+import 'package:pairs_game/components/home_pairs_content.dart';
+import 'package:pairs_game/constants/sounds.dart';
 import 'package:pairs_game/models/button_action.dart';
-import 'package:pairs_game/models/difficulty.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
 import 'package:pairs_game/providers/pairs/state.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
-import 'package:pairs_game/utils/timer_controller.dart';
+import 'package:pairs_game/providers/timer/controller.dart';
+import 'package:pairs_game/providers/timer/provider.dart';
+import 'package:pairs_game/providers/timer/state.dart';
 
 class HomePairsPage extends ConsumerStatefulWidget {
   const HomePairsPage({super.key});
@@ -25,84 +24,48 @@ class HomePairsPage extends ConsumerStatefulWidget {
 }
 
 class _HomePairsPageState extends ConsumerState<HomePairsPage> {
-  late TimerController _timerController;
   late AudioPlayer audioPlayer;
-  int remainingSeconds = 0;
+
+  TimerController get _timerController => ref.read(timerProvider.notifier);
+
   @override
   void initState() {
     audioPlayer = AudioPlayer();
-    initializeGameTimer();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        initializeTimer();
+      },
+    );
     super.initState();
   }
 
   @override
   void dispose() {
-    _timerController.stop();
     audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<PairsState>(
-      pairsProvider,
-      listenWhenGameIsFinished,
-    );
-    final Difficulty difficulty =
-        ref.watch(pairsProvider.select((state) => state.difficulty));
-  return SafeArea(
-      child: PopScope(
-        canPop: false,
-        child: Scaffold(
-          bottomNavigationBar: HomeBottomNavigator(),
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-              ),
-              onPressed: () => onArrowBackPressed(context),
-            ),
-            title: Text(
-              difficulty.label,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerTitle: true,
-            backgroundColor: UIColors.black,
-            actions: [
-              GameTimer(
-                controller: _timerController,
-                onTimerEnd: () => onTimerEnd(context, ref),
-                onTimerTick: (remainingTime) {
-                  remainingSeconds = remainingTime;
-                },
-              ),
-            ],
-          ),
-          backgroundColor: UIColors.darkGray,
-          body: Center(child: PairsGrid()),
-        ),
-      ),
+    ref.listen<PairsState>(pairsProvider, listenGameStatus);
+    ref.listen<TimerState>(timerProvider, listenTimer);
+    return HomePairsContent(
+      onArrowBackPressed: () => onArrowBackPressed(context),
     );
   }
 
-  void initializeGameTimer() {
-    final initialTime = ref
-        .read(pairsProvider.select((state) => state.difficulty))
-        .secondsDuration;
-    _timerController = TimerController(initialTime: initialTime);
+  void initializeTimer() {
+    _timerController
+      ..resetTimeForDifficulty()
+      ..startTimer();
   }
 
-  void listenWhenGameIsFinished(
+  void listenGameStatus(
     PairsState? oldState,
     PairsState currentState,
   ) async {
-    final didUserWin = oldState?.didYouWin != currentState.didYouWin;
-
-    if (didUserWin) {
+    if (oldState?.didUserWin != currentState.didUserWin &&
+        currentState.didUserWin) {
       playerWon(currentState);
       return;
     }
@@ -112,28 +75,32 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
     }
   }
 
+  void listenTimer(TimerState? previous, TimerState current) {
+    if (previous?.remainingSeconds != current.remainingSeconds &&
+        current.remainingSeconds <= 0) {
+      timeIsUp();
+    }
+  }
+
   Future<void> onCardMatched(PairsState pairsState) async {
     final currentCard =
         pairsState.countriesInGame[pairsState.selectedIndex ?? 0];
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${currentCard.name} ${currentCard.flagEmoji}'),
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 1),
       ),
     );
-    await audioPlayer.play(AssetSource("sound/success.mp3"));
+    await audioPlayer.play(AssetSource(Sounds.coinSuccess));
   }
 
   Future<void> playerWon(PairsState pairsState) async {
-    _timerController.stop();
-    final score = pairsState.score(remainingSeconds);
-    ref.read(scoresControllerProvider.notifier).saveScore(score);
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) {
         return YouWontDialog(
-          score: score,
+          score: ref.read(scoresProvider).score,
           onExit: () {
             Navigator.pop(context);
             Navigator.pop(context);
@@ -141,20 +108,19 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
           onPlayAgain: () {
             Navigator.pop(context);
             ref.read(pairsProvider.notifier).resetGame();
-            _timerController.setTime(pairsState.difficulty.secondsDuration);
-            _timerController.start();
+            _timerController
+              ..resetTimeForDifficulty()
+              ..startTimer();
           },
           state: pairsState,
-          remainingSeconds: remainingSeconds,
+          remainingSeconds: ref.read(timerProvider).remainingSeconds,
         );
       },
     );
-    await audioPlayer.play(AssetSource("sound/crowd-cheers.mp3"));
+    await audioPlayer.play(AssetSource(Sounds.crowdCheers));
   }
 
-  void onTimerEnd(BuildContext context, WidgetRef ref) {
-    audioPlayer.play(AssetSource("sound/boo.mp3"));
-
+  Future<void> timeIsUp() async {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -167,14 +133,14 @@ class _HomePairsPageState extends ConsumerState<HomePairsPage> {
           onPlayAgain: () {
             Navigator.pop(context);
             ref.read(pairsProvider.notifier).resetGame();
-            _timerController.setTime(ref
-                .read(pairsProvider.select((state) => state.difficulty))
-                .secondsDuration);
-            _timerController.start();
+            _timerController
+              ..resetTimeForDifficulty()
+              ..startTimer();
           },
         );
       },
     );
+    await audioPlayer.play(AssetSource(Sounds.boo));
   }
 
   void onArrowBackPressed(BuildContext context) {

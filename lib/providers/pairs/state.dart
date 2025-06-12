@@ -58,7 +58,7 @@ class PairsState {
     );
   }
 
-  bool get didYouWin {
+  bool get didUserWin {
     return discoveredIndexes.length == countriesInGame.length &&
         discoveredIndexes.isNotEmpty;
   }
@@ -67,36 +67,6 @@ class PairsState {
     if (selectedIndex == null || selectedIndex2 == null) return false;
     return countriesInGame[selectedIndex!].name ==
         countriesInGame[selectedIndex2!].name;
-  }
-
-// Calculates the score based on the next conditions:
-// - The minimum expected number of attemps is difficulty.pairsAmount
-// - The maximum expected number of attemps is difficulty.pairsAmount * 3
-// - The less attempts the user made, the better the score.
-// - There is maxDuration in the difficulty object like: difficulty.secondsDuration.
-// - The minimum expected duration is equal to (difficulty.pairsAmount * 2.5)
-// - The score goes from 0% to 100%.
-// The duaration that the use spent playing can be calculated by the difference between maxDuration and the remainingSeconds.
-// - The less time the user spent, the better the score.
-// - The duration is going to be equivalent to .75 of the score.
-// - The attempts are going to be equivalent to .25 of the score.
-  int score(int remainingSeconds) {
-    final minAttempts = difficulty.pairsAmount;
-    final maxAttempts = difficulty.pairsAmount * 3;
-    final minDuration = (difficulty.pairsAmount * 2.5).toInt();
-    final maxDuration = difficulty.secondsDuration;
-
-    final usedDuration = maxDuration - remainingSeconds;
-    final durationScore =
-        (1 - (usedDuration - minDuration) / (maxDuration - minDuration))
-                .clamp(0, 1) *
-            0.9;
-    final attemptsScore =
-        (1 - (attempts - minAttempts) / (maxAttempts - minAttempts))
-                .clamp(0, 1) *
-            0.1;
-
-    return ((durationScore + attemptsScore) * 100).toInt();
   }
 
   PairsState.initial()

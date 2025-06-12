@@ -5,6 +5,8 @@ import 'package:pairs_game/models/country.dart';
 import 'package:pairs_game/models/difficulty.dart';
 import 'package:pairs_game/providers/pairs/repository.dart';
 import 'package:pairs_game/providers/pairs/state.dart';
+import 'package:pairs_game/providers/scores/provider.dart';
+import 'package:pairs_game/providers/timer/provider.dart';
 
 class PairsController extends StateNotifier<PairsState> {
   final Ref ref;
@@ -107,6 +109,10 @@ class PairsController extends StateNotifier<PairsState> {
         state.selectedIndex2!
       ],
     ).copyWithoutSelectedIndexes();
+    if (state.didUserWin) {
+      ref.read(timerProvider.notifier).stopTimer();
+      ref.read(scoresProvider.notifier).saveScore();
+    }
   }
 
   void resetGame() {

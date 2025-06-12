@@ -14,7 +14,7 @@ class ScoresPage extends ConsumerWidget {
   static final String routeName = "/scores";
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scoresState = ref.watch(scoresControllerProvider);
+    final scoresState = ref.watch(scoresProvider);
     return Scaffold(
       backgroundColor: UIColors.darkGray,
       appBar: AppBar(
@@ -41,7 +41,7 @@ class ScoresPage extends ConsumerWidget {
           ScoreMenuButton(
             currentFilter: scoresState.filter,
             onMenuItemSelected: (String value) {
-              ref.read(scoresControllerProvider.notifier).setFilter(value);
+              ref.read(scoresProvider.notifier).setFilter(value);
             },
           ),
           IconButton(
