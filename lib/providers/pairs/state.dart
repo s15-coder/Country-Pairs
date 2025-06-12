@@ -1,7 +1,15 @@
 import 'package:pairs_game/models/country.dart';
 import 'package:pairs_game/models/difficulty.dart';
 
+enum RequestStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
+
 class PairsState {
+  final RequestStatus getCountriesStatus;
   final List<Country> countriesInGame;
   final List<int> discoveredIndexes;
   final Difficulty difficulty;
@@ -16,6 +24,7 @@ class PairsState {
     required this.selectedIndex2,
     required this.discoveredIndexes,
     this.attempts = 0,
+    this.getCountriesStatus = RequestStatus.initial,
   });
   PairsState copyWith({
     List<Country>? countriesInGame,
@@ -24,6 +33,7 @@ class PairsState {
     int? selectedIndex2,
     List<int>? discoveredIndexes,
     int? attempts,
+    RequestStatus? getCountriesStatus,
   }) {
     return PairsState(
       countriesInGame: countriesInGame ?? this.countriesInGame,
@@ -32,6 +42,7 @@ class PairsState {
       selectedIndex2: selectedIndex2 ?? this.selectedIndex2,
       discoveredIndexes: discoveredIndexes ?? this.discoveredIndexes,
       attempts: attempts ?? this.attempts,
+      getCountriesStatus: getCountriesStatus ?? this.getCountriesStatus,
     );
   }
 
@@ -43,6 +54,7 @@ class PairsState {
       selectedIndex2: null,
       attempts: attempts,
       discoveredIndexes: discoveredIndexes,
+      getCountriesStatus: getCountriesStatus,
     );
   }
 
@@ -53,8 +65,8 @@ class PairsState {
 
   bool get isEqualCard {
     if (selectedIndex == null || selectedIndex2 == null) return false;
-    return countriesInGame[selectedIndex!].country ==
-        countriesInGame[selectedIndex2!].country;
+    return countriesInGame[selectedIndex!].name ==
+        countriesInGame[selectedIndex2!].name;
   }
 
 // Calculates the score based on the next conditions:
@@ -93,5 +105,6 @@ class PairsState {
         selectedIndex = null,
         discoveredIndexes = [],
         attempts = 0,
+        getCountriesStatus = RequestStatus.initial,
         selectedIndex2 = null;
 }
