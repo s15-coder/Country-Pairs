@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/pages/home_pairs_page.dart';
-import 'package:pairs_game/pages/scores_page.dart';
-import 'package:pairs_game/pages/welcome_game_page.dart';
+import 'package:pairs_game/pages/home/home_layout.dart';
+import 'package:pairs_game/pages/pairs_game_page.dart';
 import 'package:pairs_game/services/hive_db.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await HiveDBService().initializeHive();
   runApp(ProviderScope(child: const App()));
 }
@@ -21,11 +25,10 @@ class App extends StatelessWidget {
       title: 'Counter App',
       theme: ThemeData(primarySwatch: Colors.blue),
       routes: {
-        WelcomeGamePage.routeName: (context) => const WelcomeGamePage(),
-        HomePairsPage.routeName: (context) => const HomePairsPage(),
-        ScoresPage.routeName: (context) => const ScoresPage(),
+        HomeLayout.routeName: (context) => const HomeLayout(),
+        PairsGamePage.routeName: (context) => const PairsGamePage(),
       },
-      initialRoute: WelcomeGamePage.routeName,
+      initialRoute: HomeLayout.routeName,
     );
   }
 }

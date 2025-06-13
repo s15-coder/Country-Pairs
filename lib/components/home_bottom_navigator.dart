@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/components/dialogs/custom_dialog.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/models/button_action.dart';
-import 'package:pairs_game/pages/home_pairs_page.dart';
+import 'package:pairs_game/pages/pairs_game_page.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
 
 class HomeBottomNavigator extends ConsumerWidget {
@@ -51,7 +51,7 @@ class HomeBottomNavigator extends ConsumerWidget {
                             Navigator.pop(context);
                             Navigator.pushReplacementNamed(
                               context,
-                              HomePairsPage.routeName,
+                              PairsGamePage.routeName,
                             );
                           },
                         ),

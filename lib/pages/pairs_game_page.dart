@@ -14,16 +14,16 @@ import 'package:pairs_game/providers/timer/controller.dart';
 import 'package:pairs_game/providers/timer/provider.dart';
 import 'package:pairs_game/providers/timer/state.dart';
 
-class HomePairsPage extends ConsumerStatefulWidget {
-  const HomePairsPage({super.key});
+class PairsGamePage extends ConsumerStatefulWidget {
+  const PairsGamePage({super.key});
 
-  static const String routeName = '/homePairsPages';
+  static const String routeName = '/PairsGamePages';
 
   @override
-  ConsumerState<HomePairsPage> createState() => _HomePairsPageState();
+  ConsumerState<PairsGamePage> createState() => _PairsGamePageState();
 }
 
-class _HomePairsPageState extends ConsumerState<HomePairsPage> {
+class _PairsGamePageState extends ConsumerState<PairsGamePage> {
   late AudioPlayer audioPlayer;
 
   TimerController get _timerController => ref.read(timerProvider.notifier);
