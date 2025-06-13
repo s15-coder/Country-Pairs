@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/models/db/score.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
+import 'package:pairs_game/providers/scores/repository.dart';
 import 'package:pairs_game/providers/scores/state.dart';
 import 'package:pairs_game/providers/timer/provider.dart';
 import 'package:pairs_game/services/hive_db.dart';
@@ -53,6 +54,12 @@ class ScoresController extends StateNotifier<ScoresState> {
       difficulty: pairsProviderCtrl.difficulty.label,
       modality: "FLAG_MATCH",
     );
+    await ref.read(scoresRepositoryProvider).addScore(
+          playerName: scoreObj.playerName,
+          score: scoreObj.score,
+          difficulty: scoreObj.difficulty,
+          date: DateTime.parse(scoreObj.date),
+        );
     await hiveService.addScore(scoreObj);
   }
 

@@ -28,15 +28,6 @@ class ScoresPage extends ConsumerWidget {
         ),
         backgroundColor: UIColors.black,
         centerTitle: true,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-              size: 30,
-            )),
         actions: [
           ScoreMenuButton(
             currentFilter: scoresState.filter,

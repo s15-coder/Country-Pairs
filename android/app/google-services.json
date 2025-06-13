@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877106905994",
+    "project_id": "country-pairs",
+    "storage_bucket": "country-pairs.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877106905994:android:62c939faf20ad26a387e73",
+        "android_client_info": {
+          "package_name": "com.countrypairs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3VzUGQNFvDFztIhOmFwNTLnD3XrjUwiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
