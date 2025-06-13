@@ -27,14 +27,6 @@ class Score {
     required this.date,
   });
 
-  String get formattedDate {
-    final dateTime = DateTime.tryParse(date);
-    if (dateTime == null) return date;
-    return "${dateTime.day.toString().padLeft(2, '0')}-"
-        "${dateTime.month.toString().padLeft(2, '0')}-"
-        "${dateTime.year}";
-  }
-
   factory Score.fromJson(Map<String, dynamic> json) {
     return Score(
       difficulty: json['difficulty'] as String,

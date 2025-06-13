@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
+import 'package:pairs_game/helpers/date_formatter.dart';
 import 'package:pairs_game/models/db/score.dart';
 import 'package:pairs_game/models/difficulty.dart';
 
@@ -156,7 +157,7 @@ class ScoreListTile extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            score.formattedDate,
+            formatDate(score.date),
             style: TextStyle(
               color: Colors.grey.shade400,
               fontSize: 13,
