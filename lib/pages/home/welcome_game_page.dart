@@ -18,53 +18,50 @@ class WelcomeGamePage extends ConsumerWidget {
 
     return SingleChildScrollView(
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              "assets/app/icon_pair.png",
-              width: 200,
-            ),
-            const SizedBox(height: 24),
-            PlayerNameField(
-              initialName:
-                  ref.watch(scoresProvider.select((state) => state.playerName)),
-              onNameChanged: (name) {
-                ref.read(scoresProvider.notifier).setPlayerName(name);
-              },
-            ),
-            WelcomeButton(
-              onPressed: () {
-                ref.read(pairsProvider.notifier).shuffleGameCards();
-                Navigator.pushNamed(
-                  context,
-                  PairsGamePage.routeName,
-                );
-              },
-              text: "Start Game",
-            ),
-            WelcomeButton(
-              onPressed: () {
-                showModalBottomSheet(
-                  constraints: const BoxConstraints(
-                    maxWidth: double.infinity,
-                  ),
-                  backgroundColor: UIColors.darkGray,
-                  context: context,
-                  builder: (context) {
-                    return const DifficultyOptions();
-                  },
-                );
-              },
-              text: "Difficulty: ${difficulty.label} ",
-            ),
-            WelcomeButton(
-              onPressed: () async {
-                // TODO: Implement settings functionality
-              },
-              text: "Settings",
-            ),
-          ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              Image.asset(
+                "assets/app/icon_pair.png",
+                width: 200,
+              ),
+              const SizedBox(height: 24),
+              PlayerNameField(
+                initialName: ref
+                    .watch(scoresProvider.select((state) => state.playerName)),
+                onNameChanged: (name) {
+                  ref.read(scoresProvider.notifier).setPlayerName(name);
+                },
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  ref.read(pairsProvider.notifier).shuffleGameCards();
+                  Navigator.pushNamed(
+                    context,
+                    PairsGamePage.routeName,
+                  );
+                },
+                text: "Start Game",
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    constraints: const BoxConstraints(
+                      maxWidth: double.infinity,
+                    ),
+                    backgroundColor: UIColors.darkGray,
+                    context: context,
+                    builder: (context) {
+                      return const DifficultyOptions();
+                    },
+                  );
+                },
+                text: "Difficulty: ${difficulty.label} ",
+              ),
+            ],
+          ),
         ),
       ),
     );
