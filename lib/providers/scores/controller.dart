@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/models/db/score.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
@@ -54,13 +55,19 @@ class ScoresController extends StateNotifier<ScoresState> {
       difficulty: pairsProviderCtrl.difficulty.label,
       modality: "FLAG_MATCH",
     );
-    await ref.read(scoresRepositoryProvider).addScore(
-          playerName: scoreObj.playerName,
-          score: scoreObj.score,
-          difficulty: scoreObj.difficulty,
-          date: DateTime.parse(scoreObj.date),
-        );
-    await hiveService.addScore(scoreObj);
+    try {
+      await ref.read(scoresRepositoryProvider).addScore(
+            playerName: scoreObj.playerName,
+            score: scoreObj.score,
+            difficulty: scoreObj.difficulty,
+            date: DateTime.parse(scoreObj.date),
+          );
+      await hiveService.addScore(scoreObj);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error saving score: $e");
+      }
+    }
   }
 
   void setPlayerName(String name) {
@@ -69,5 +76,12 @@ class ScoresController extends StateNotifier<ScoresState> {
 
   void setFilter(String filter) {
     state = state.copyWith(filter: filter);
+  }
+
+  Future<List<Score>> getTopScores() async {
+    final difficulty = ref.read(pairsProvider).difficulty.label;
+    return await ref.read(scoresRepositoryProvider).getTopScores(
+          difficulty: difficulty,
+        );
   }
 }

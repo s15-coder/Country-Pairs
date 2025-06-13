@@ -4,7 +4,7 @@ import 'package:pairs_game/models/db/score.dart';
 import 'package:pairs_game/models/difficulty.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/providers/scores/repository.dart';
+import 'package:pairs_game/providers/scores/provider.dart';
 
 class LeaderboardPage extends ConsumerStatefulWidget {
   static const String routeName = '/leaderboardPage';
@@ -76,9 +76,7 @@ class LeaderboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<List<Score>>(
-      future: ref
-          .read(scoresRepositoryProvider)
-          .getTopScores(difficulty: difficultyLabel),
+      future: ref.read(scoresProvider.notifier).getTopScores(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

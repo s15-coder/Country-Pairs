@@ -24,15 +24,6 @@ class ScoresRepository {
     }
   }
 
-  Stream<QuerySnapshot> getTopScoresStream(
-      {required String difficulty, int limit = 10}) {
-    return _scoresCollection
-        .where('difficulty', isEqualTo: difficulty)
-        .orderBy('score', descending: true)
-        .limit(limit)
-        .snapshots();
-  }
-
   Future<List<Score>> getTopScores({
     required String difficulty,
     int limit = 10,
