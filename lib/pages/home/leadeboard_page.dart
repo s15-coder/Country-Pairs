@@ -77,7 +77,7 @@ class LeaderboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<List<Score>>(
-      future: ref.read(scoresProvider.notifier).getTopScores(),
+      future: ref.read(scoresProvider.notifier).getTopScores(difficultyLabel),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

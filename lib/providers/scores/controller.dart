@@ -78,8 +78,7 @@ class ScoresController extends StateNotifier<ScoresState> {
     state = state.copyWith(filter: filter);
   }
 
-  Future<List<Score>> getTopScores() async {
-    final difficulty = ref.read(pairsProvider).difficulty.label;
+  Future<List<Score>> getTopScores(String difficulty) async {
     return await ref.read(scoresRepositoryProvider).getTopScores(
           difficulty: difficulty,
         );
