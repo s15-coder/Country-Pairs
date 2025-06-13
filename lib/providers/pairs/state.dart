@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:pairs_game/models/country.dart';
 import 'package:pairs_game/models/difficulty.dart';
 
@@ -8,7 +9,7 @@ enum RequestStatus {
   error,
 }
 
-class PairsState {
+class PairsState extends Equatable {
   final RequestStatus getCountriesStatus;
   final List<Country> countriesInGame;
   final List<int> discoveredIndexes;
@@ -77,4 +78,15 @@ class PairsState {
         attempts = 0,
         getCountriesStatus = RequestStatus.initial,
         selectedIndex2 = null;
+
+  @override
+  List<Object?> get props => [
+        countriesInGame,
+        difficulty,
+        selectedIndex,
+        selectedIndex2,
+        discoveredIndexes,
+        attempts,
+        getCountriesStatus,
+      ];
 }

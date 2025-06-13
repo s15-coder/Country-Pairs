@@ -19,7 +19,7 @@ class ScoreAdapter extends TypeAdapter<Score> {
     return Score(
       difficulty: fields[0] as String,
       score: fields[1] as int,
-      modality: fields[2] as String,
+      modality: fields[2] as String?,
       playerName: fields[3] as String,
       date: fields[4] as String,
     );

@@ -86,7 +86,7 @@ class PairsController extends StateNotifier<PairsState> {
         state.countriesInGame[state.selectedIndex2!].name;
 
     // Add a delay to allow the UI show both selected cards before checking for a match
-    Future.delayed(const Duration(seconds: 1), () async {
+    await Future.delayed(const Duration(seconds: 1), () async {
       if (areCardsMatched) {
         _addDiscoveredCards();
       } else {
@@ -115,8 +115,8 @@ class PairsController extends StateNotifier<PairsState> {
     }
   }
 
-  void resetGame() {
-    shuffleGameCards();
+  Future<void> resetGame() async {
+    await shuffleGameCards();
   }
 
   void resetSelectedIndexes() {
