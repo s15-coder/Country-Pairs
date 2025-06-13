@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
-import 'package:pairs_game/pages/scores_page.dart';
-import 'package:pairs_game/pages/welcome_game_page.dart';
-import 'package:pairs_game/pages/leadeboard_page.dart';
+import 'package:pairs_game/pages/home/scores_page.dart';
+import 'package:pairs_game/pages/home/welcome_game_page.dart';
+import 'package:pairs_game/pages/home/leadeboard_page.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pairs_game/pages/layout/home_layout.dart';
+import 'package:pairs_game/pages/home/home_layout.dart';
 import 'package:pairs_game/pages/pairs_game_page.dart';
 import 'package:pairs_game/services/hive_db.dart';
 import 'package:firebase_core/firebase_core.dart';
