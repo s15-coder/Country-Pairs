@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/providers/theme/provider.dart';
 import 'package:pairs_game/style/theme/dark_theme.dart';
@@ -30,24 +29,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ref.read(themeProvider.notifier).toggleTheme();
   }
 
-  void _onGoogleSignIn() {
-    // Mock Google sign-in logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google Sign-In pressed')),
-    );
-  }
+  // void _onGoogleSignIn() {
+  //   // Mock Google sign-in logic
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Google Sign-In pressed')),
+  //   );
+  // }
 
-  void _onAppleSignIn() {
-    // Mock Apple sign-in logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Apple Sign-In pressed')),
-    );
-  }
+  // void _onAppleSignIn() {
+  //   // Mock Apple sign-in logic
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Apple Sign-In pressed')),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final String initial =
-        userName.isNotEmpty ? userName[0].toUpperCase() : '?';
+    // final String initial =
+    //     userName.isNotEmpty ? userName[0].toUpperCase() : '?';
     final themeData = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(
