@@ -9,7 +9,7 @@ import 'package:pairs_game/providers/pairs/provider.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 
 class WelcomeGamePage extends ConsumerWidget {
-  const WelcomeGamePage({super.key});
+const WelcomeGamePage({super.key});
   static const String routeName = '/welcomeGamePage';
 
   @override
@@ -37,7 +37,6 @@ class WelcomeGamePage extends ConsumerWidget {
               ),
               WelcomeButton(
                 onPressed: () {
-                  ref.read(pairsProvider.notifier).shuffleGameCards();
                   Navigator.pushNamed(
                     context,
                     PairsGamePage.routeName,

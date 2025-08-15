@@ -1,11 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pairs_game/constants/sounds.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
 import 'package:pairs_game/providers/timer/state.dart';
+import 'package:pairs_game/services/audio_player_service.dart';
 
 class TimerController extends StateNotifier<TimerState> {
   Ref ref;
-  TimerController(this.ref) : super(TimerState.initial());
-
+  late AudioPlayerService audioPlayerInstance;
+  TimerController(this.ref) : super(TimerState.initial()) {
+    audioPlayerInstance = ref.read(audioPlayerService);
+  }
   void startTimer() {
     state = state.copyWith(isRunning: true);
   }
@@ -18,6 +22,7 @@ class TimerController extends StateNotifier<TimerState> {
     if (state.remainingSeconds > 0) {
       state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
     } else {
+      audioPlayerInstance.playSound(Sounds.boo);
       stopTimer();
     }
   }

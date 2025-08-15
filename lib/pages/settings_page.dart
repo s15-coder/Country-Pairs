@@ -12,41 +12,19 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  late String networkUrl;
-  late String userName;
-  bool _soundsEnabled = true; // Default value for sounds
+  bool _soundsEnabled = true;
 
   @override
   void initState() {
     super.initState();
-    // Mock data
-    networkUrl =
-        'https://thispersondoesnotexist.com/'; // or provide a sample image URL
-    userName = 'Esteban';
   }
 
   void _onThemeChanged() {
     ref.read(themeProvider.notifier).toggleTheme();
   }
 
-  // void _onGoogleSignIn() {
-  //   // Mock Google sign-in logic
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(content: Text('Google Sign-In pressed')),
-  //   );
-  // }
-
-  // void _onAppleSignIn() {
-  //   // Mock Apple sign-in logic
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(content: Text('Apple Sign-In pressed')),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // final String initial =
-    //     userName.isNotEmpty ? userName[0].toUpperCase() : '?';
     final themeData = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(
@@ -63,25 +41,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // Center(
-            //   child: networkUrl.isNotEmpty
-            //       ? CircleAvatar(
-            //           radius: 48,
-            //           backgroundImage: NetworkImage(networkUrl),
-            //         )
-            //       : CircleAvatar(
-            //           radius: 48,
-            //           backgroundColor: UIColors.green,
-            //           child: Text(
-            //             initial,
-            //             style: const TextStyle(
-            //               fontSize: 40,
-            //               color: Colors.white,
-            //             ),
-            //           ),
-            //         ),
-            // ),
-            // const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -136,26 +95,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ],
             ),
             const SizedBox(height: 32),
-            // ElevatedButton.icon(
-            //   label: const Text('Sign in with Google'),
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.white,
-            //     foregroundColor: Colors.black,
-            //     minimumSize: const Size(double.infinity, 48),
-            //   ),
-            //   onPressed: _onGoogleSignIn,
-            // ),
-            // const SizedBox(height: 16),
-            // ElevatedButton.icon(
-            //   icon: const Icon(Icons.apple, size: 24),
-            //   label: const Text('Sign in with Apple'),
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: Colors.black,
-            //     foregroundColor: Colors.white,
-            //     minimumSize: const Size(double.infinity, 48),
-            //   ),
-            //   onPressed: _onAppleSignIn,
-            // ),
           ],
         ),
       ),
