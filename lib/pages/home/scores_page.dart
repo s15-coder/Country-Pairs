@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pairs_game/components/dialogs/custom_dialog.dart';
 import 'package:pairs_game/components/score_menu_button.dart';
 import 'package:pairs_game/components/scores_list.dart';
-import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/models/button_action.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 import 'package:pairs_game/services/hive_db.dart';
@@ -16,17 +15,10 @@ class ScoresPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final scoresState = ref.watch(scoresProvider);
     return Scaffold(
-      backgroundColor: UIColors.darkGray,
       appBar: AppBar(
         title: const Text(
-          "Scores",
-          style: TextStyle(
-            color: Color.fromARGB(255, 252, 239, 239),
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          "My Scores",
         ),
-        backgroundColor: UIColors.black,
         centerTitle: true,
         actions: [
           ScoreMenuButton(
@@ -38,8 +30,6 @@ class ScoresPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(
               Icons.delete,
-              color: Colors.white,
-              size: 30,
             ),
             onPressed: () {
               showDialog(

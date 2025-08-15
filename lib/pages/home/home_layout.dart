@@ -30,9 +30,6 @@ class _HomeLayoutState extends State<HomeLayout> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: UIColors.green,
-        backgroundColor: UIColors.black,
         selectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 14,
@@ -69,7 +66,6 @@ class _HomeLayoutState extends State<HomeLayout> {
           ),
         ],
       ),
-      backgroundColor: UIColors.darkGray,
       body: _pages[_currentIndex],
     );
   }

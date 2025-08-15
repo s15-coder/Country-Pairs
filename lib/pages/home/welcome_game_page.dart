@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/components/difficulty_options.dart';
 import 'package:pairs_game/components/player_name_field.dart';
 import 'package:pairs_game/components/welcome_button.dart';
-import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/pages/pairs_game_page.dart';
+import 'package:pairs_game/pages/settings_page.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 
@@ -51,7 +51,7 @@ class WelcomeGamePage extends ConsumerWidget {
                     constraints: const BoxConstraints(
                       maxWidth: double.infinity,
                     ),
-                    backgroundColor: UIColors.darkGray,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     context: context,
                     builder: (context) {
                       return const DifficultyOptions();
@@ -59,6 +59,13 @@ class WelcomeGamePage extends ConsumerWidget {
                   );
                 },
                 text: "Difficulty: ${difficulty.label} ",
+              ),
+              WelcomeButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SettingsPage.routeName);
+                },
+                text: "Settings",
+                icon: Icons.settings,
               ),
             ],
           ),

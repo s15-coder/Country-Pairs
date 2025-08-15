@@ -7,10 +7,12 @@ class WelcomeButton extends StatelessWidget {
     required this.onPressed,
     required this.text,
     this.color = UIColors.green,
+    this.icon,
   });
   final String text;
   final VoidCallback onPressed;
   final Color color;
+  final IconData? icon;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -40,7 +42,19 @@ class WelcomeButton extends StatelessWidget {
             padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
           ),
           onPressed: onPressed,
-          child: Text(text),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(text),
+              if (icon != null) const SizedBox(width: 10),
+              if (icon != null)
+                Icon(
+                  icon,
+                  size: 30,
+                  color: color,
+                ),
+            ],
+          ),
         ),
       ),
     );

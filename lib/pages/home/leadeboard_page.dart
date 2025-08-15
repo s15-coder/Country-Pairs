@@ -37,20 +37,12 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage>
     return DefaultTabController(
       length: Difficulty.values.length,
       child: Scaffold(
-        backgroundColor: UIColors.darkGray,
         appBar: AppBar(
-          backgroundColor: UIColors.black,
           title: const Text(
             'Leaderboard',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.white,
-            ),
           ),
           bottom: TabBar(
             controller: _tabController,
-            labelColor: Colors.white,
             indicatorColor: UIColors.green,
             tabs: [
               for (final diff in Difficulty.values) Tab(text: diff.label),
@@ -87,10 +79,10 @@ class LeaderboardTab extends ConsumerWidget {
         }
         final scores = snapshot.data ?? [];
         if (scores.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
               'No scores yet.',
-              style: TextStyle(color: Colors.white),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           );
         }
@@ -136,7 +128,7 @@ class ScoreListTile extends StatelessWidget {
       child: Material(
         elevation: 2,
         borderRadius: BorderRadius.circular(12),
-        color: UIColors.black.withValues(alpha: 0.85),
+        color: Theme.of(context).cardColor,
         child: ListTile(
           leading: CircleAvatar(
             backgroundColor: rankColor,
@@ -150,11 +142,7 @@ class ScoreListTile extends StatelessWidget {
           ),
           title: Text(
             score.playerName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(),
           ),
           subtitle: Text(
             formatDate(score.date),
