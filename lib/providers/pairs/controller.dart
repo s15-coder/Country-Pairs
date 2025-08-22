@@ -9,10 +9,14 @@ import 'package:pairs_game/providers/pairs/state.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 import 'package:pairs_game/providers/timer/provider.dart';
 import 'package:pairs_game/services/audio_player_service.dart';
+import 'package:pairs_game/services/shared_preferences_provider.dart';
 
 class PairsController extends StateNotifier<PairsState> {
   final Ref ref;
-  PairsController(this.ref) : super(PairsState.initial());
+  late final SharedPreferencesProvider sharedPreferences;
+  PairsController(this.ref) : super(PairsState.initial()) {
+    sharedPreferences = ref.read(sharedPreferencesProvider);
+  }
 
   void updateDifficulty(Difficulty difficulty) {
     state = state.copyWith(difficulty: difficulty);
@@ -95,23 +99,23 @@ class PairsController extends StateNotifier<PairsState> {
     final areCardsMatched = state.countriesInGame[state.selectedIndex!].name ==
         state.countriesInGame[state.selectedIndex2!].name;
 
-    if (areCardsMatched) {
+    if (areCardsMatched && await sharedPreferences.isPlayMusicEnabled()) {
       ref.read(audioPlayerService).playSound(Sounds.coinSuccess);
     }
     // Add a delay to allow the UI show both selected cards before checking for a match
-    await Future.delayed(const Duration(seconds: 1), () async {
-      if (areCardsMatched) {
-        _addDiscoveredCards();
-      } else {
-        state = state.copyWithoutSelectedIndexes();
-      }
-    });
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (areCardsMatched) {
+      await _addDiscoveredCards();
+    } else {
+      state = state.copyWithoutSelectedIndexes();
+    }
   }
 
   /// Adds the currently selected cards to the list of discovered cards.
   ///
   /// Also resets the selected indexes after adding.
-  void _addDiscoveredCards() {
+  Future<void> _addDiscoveredCards() async {
     if (state.selectedIndex == null || state.selectedIndex2 == null) {
       return;
     }
@@ -123,7 +127,9 @@ class PairsController extends StateNotifier<PairsState> {
       ],
     ).copyWithoutSelectedIndexes();
     if (state.didUserWin) {
-      ref.read(audioPlayerService).playSound(Sounds.crowdCheers);
+      if (await sharedPreferences.isPlayMusicEnabled()) {
+        ref.read(audioPlayerService).playSound(Sounds.crowdCheers);
+      }
       ref.read(timerProvider.notifier).stopTimer();
       ref.read(scoresProvider.notifier).saveScore();
     }

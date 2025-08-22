@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/providers/theme/provider.dart';
+import 'package:pairs_game/services/shared_preferences_provider.dart';
 import 'package:pairs_game/style/theme/dark_theme.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -12,8 +13,6 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  bool _soundsEnabled = true;
-
   @override
   void initState() {
     super.initState();
@@ -83,15 +82,22 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                   ],
                 ),
-                Switch(
-                  activeColor: Theme.of(context).primaryColor,
-                  value: _soundsEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _soundsEnabled = value;
-                    });
-                  },
-                ),
+                FutureBuilder<bool>(
+                    future: ref
+                        .read(sharedPreferencesProvider)
+                        .isPlayMusicEnabled(),
+                    builder: (context, snapshot) {
+                      return Switch(
+                        activeColor: Theme.of(context).primaryColor,
+                        value: snapshot.data ?? true,
+                        onChanged: (value) {
+                          ref
+                              .read(sharedPreferencesProvider)
+                              .setPlayMusicEnabled(value);
+                          setState(() {});
+                        },
+                      );
+                    }),
               ],
             ),
             const SizedBox(height: 32),
