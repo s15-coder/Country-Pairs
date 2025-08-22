@@ -57,7 +57,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ],
                 ),
                 Switch(
-                  activeColor: Theme.of(context).primaryColor,
+                  activeThumbColor: Theme.of(context).primaryColor,
                   value: themeData == darkTheme,
                   onChanged: (_) {
                     _onThemeChanged();
@@ -88,7 +88,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         .isPlayMusicEnabled(),
                     builder: (context, snapshot) {
                       return Switch(
-                        activeColor: Theme.of(context).primaryColor,
+                        activeThumbColor: Theme.of(context).primaryColor,
                         value: snapshot.data ?? true,
                         onChanged: (value) {
                           ref
