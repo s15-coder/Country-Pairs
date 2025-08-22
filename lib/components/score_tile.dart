@@ -2,42 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:pairs_game/models/db/score.dart';
 
 class ScoreTile extends StatelessWidget {
-  const ScoreTile({
-    required this.index,
-    required this.score,
-    super.key
-  });
+  const ScoreTile({required this.index, required this.score, super.key});
   final int index;
   final Score score;
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Text(
-        "#${index + 1}",
-        style: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      leading: Text("#${index + 1}",
+          style: Theme.of(context).textTheme.displaySmall),
       title: Text(
         score.playerName,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
       subtitle: Text(
         "Score: ${score.score}",
-        style: TextStyle(color: Colors.white),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
       trailing: Text(
         score.difficulty,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
   }

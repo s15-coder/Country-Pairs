@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pairs_game/components/dialogs/custom_dialog.dart';
-import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/models/button_action.dart';
 import 'package:pairs_game/pages/pairs_game_page.dart';
 import 'package:pairs_game/providers/pairs/provider.dart';
@@ -13,15 +12,20 @@ class HomeBottomNavigator extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final attempts = ref.watch(pairsProvider.select((state) => state.attempts));
     return BottomNavigationBar(
-      unselectedItemColor: Colors.white,
-      selectedItemColor: Colors.white,
-      backgroundColor: UIColors.black,
+      unselectedItemColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
+      selectedItemColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
       items: [
         BottomNavigationBarItem(
           icon: Text(
             attempts.toString(),
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),

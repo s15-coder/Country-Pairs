@@ -11,6 +11,7 @@ import 'package:pairs_game/providers/scores/controller.dart';
 import 'package:pairs_game/providers/scores/provider.dart';
 import 'package:pairs_game/providers/timer/controller.dart';
 import 'package:pairs_game/providers/timer/provider.dart';
+import 'package:pairs_game/services/shared_preferences_provider.dart';
 
 import 'pairs_controller_test.mocks.dart';
 
@@ -18,18 +19,23 @@ class MockScoresNotifier extends Mock implements ScoresController {}
 
 class MockTimerNotifier extends Mock implements TimerController {}
 
-@GenerateNiceMocks([MockSpec<PairsRepository>()])
+@GenerateNiceMocks([
+  MockSpec<PairsRepository>(),
+  MockSpec<SharedPreferencesProvider>(),
+])
 void main() {
   late ProviderContainer container;
   late MockPairsRepository mockRepository;
   late MockScoresNotifier mockScoresNotifier;
   late MockTimerNotifier mockTimerNotifier;
+  late MockSharedPreferencesProvider mockSharedPreferencesProvider;
   late List<Country> mockCountries;
   late ProviderSubscription<PairsState> sub;
   setUp(() {
     mockRepository = MockPairsRepository();
     mockScoresNotifier = MockScoresNotifier();
     mockTimerNotifier = MockTimerNotifier();
+    mockSharedPreferencesProvider = MockSharedPreferencesProvider();
     mockCountries = [
       Country(
         name: 'A',
@@ -54,6 +60,8 @@ void main() {
     container = ProviderContainer(
       overrides: [
         pairsRepositoryProvider.overrideWithValue(mockRepository),
+        sharedPreferencesProvider
+            .overrideWithValue(mockSharedPreferencesProvider),
         scoresProvider.overrideWith((ref) => mockScoresNotifier),
         timerProvider.overrideWith((ref) => mockTimerNotifier),
       ],
@@ -99,6 +107,8 @@ void main() {
 
   test('selectCard selects first and second card, increases attempts',
       () async {
+    when(mockSharedPreferencesProvider.isPlayMusicEnabled())
+        .thenAnswer((_) async => true);
     when(mockRepository.fetchCountries(any)).thenAnswer((_) async => [
           Country(
             name: 'A',
@@ -116,11 +126,13 @@ void main() {
     final controller = container.read(pairsProvider.notifier);
     await controller.shuffleGameCards();
 
-    controller.selectCard(0);
+    await controller.selectCard(0);
     expect(controller.state.selectedIndex, 0);
 
-    controller.selectCard(1);
-    expect(controller.state.selectedIndex2, 1);
+    // It is null because both cards have matched. It means that
+    //the game is waiting for the next selection.
+    await controller.selectCard(1);
+    expect(controller.state.selectedIndex2, null);
 
     // Wait for delayed comparison
     await Future.delayed(const Duration(seconds: 2, milliseconds: 100));

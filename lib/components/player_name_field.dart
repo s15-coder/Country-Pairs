@@ -71,27 +71,25 @@ class _PlayerNameFieldState extends State<PlayerNameField> {
                 },
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(right: 80, left: 20),
-                    filled: true,
-                    fillColor: UIColors.black,
-                    hintText: "Enter your name",
-                    hintStyle: const TextStyle(
-                      color: Color.fromARGB(108, 255, 255, 255),
-                      fontSize: 18,
-                    ),
-                    suffixIcon: Container(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide.none,
-                    ),
-                    suffixIconConstraints: BoxConstraints(
-                      maxHeight: 60,
-                      maxWidth: 60,
-                    )),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+                  contentPadding: const EdgeInsets.only(right: 80, left: 20),
+                  filled: true,
+                  hintText: "Enter your name",
+                  hintStyle: const TextStyle(
+                    fontSize: 18,
+                  ),
+                  suffixIcon: Container(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIconConstraints: BoxConstraints(
+                    maxHeight: 60,
+                    maxWidth: 60,
+                  ),
                 ),
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      fontWeight: FontWeight.normal,
+                    ),
               ),
               Positioned(
                 right: 0,

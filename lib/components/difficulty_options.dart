@@ -14,7 +14,8 @@ class DifficultyOptions extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         WelcomeButton(
-          color: Colors.white,
+          color:
+              Theme.of(context).textTheme.displayLarge?.color ?? Colors.white,
           onPressed: () {
             pairsProviderController.updateDifficulty(Difficulty.easy);
             Navigator.pop(context);
@@ -22,7 +23,8 @@ class DifficultyOptions extends ConsumerWidget {
           text: Difficulty.easy.label,
         ),
         WelcomeButton(
-          color: Colors.white,
+          color:
+              Theme.of(context).textTheme.displayLarge?.color ?? Colors.white,
           onPressed: () {
             pairsProviderController.updateDifficulty(Difficulty.medium);
             Navigator.pop(context);
@@ -30,7 +32,8 @@ class DifficultyOptions extends ConsumerWidget {
           text: Difficulty.medium.label,
         ),
         WelcomeButton(
-          color: Colors.white,
+          color:
+              Theme.of(context).textTheme.displayLarge?.color ?? Colors.white,
           onPressed: () {
             pairsProviderController.updateDifficulty(Difficulty.hard);
             Navigator.pop(context);
@@ -38,7 +41,8 @@ class DifficultyOptions extends ConsumerWidget {
           text: Difficulty.hard.label,
         ),
         WelcomeButton(
-          color: Colors.white,
+          color:
+              Theme.of(context).textTheme.displayLarge?.color ?? Colors.white,
           onPressed: () {
             pairsProviderController.updateDifficulty(Difficulty.expert);
             Navigator.pop(context);

@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:pairs_game/constants/environment.dart';
 import 'package:pairs_game/constants/ui_colors.dart';
 import 'package:pairs_game/pages/home/scores_page.dart';
 import 'package:pairs_game/pages/home/welcome_game_page.dart';
 import 'package:pairs_game/pages/home/leadeboard_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pairs_game/providers/scores/provider.dart';
 
-class HomeLayout extends StatefulWidget {
+class HomeLayout extends ConsumerStatefulWidget {
   const HomeLayout({super.key});
   static const String routeName = '/home-layout';
 
   @override
-  State<HomeLayout> createState() => _HomeLayoutState();
+  ConsumerState<HomeLayout> createState() => _HomeLayoutState();
 }
 
-class _HomeLayoutState extends State<HomeLayout> {
+class _HomeLayoutState extends ConsumerState<HomeLayout> {
   int _currentIndex = 0;
-  final List<Widget> _pages = [
-    WelcomeGamePage(),
-    LeaderboardPage(),
-    ScoresPage(),
-  ];
+
+  List<Widget> get pages {
+    final playerName = ref.watch(scoresProvider).playerName;
+    return [
+      WelcomeGamePage(),
+      if (playerName == vipUsers) LeaderboardPage(),
+      ScoresPage(),
+    ];
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -27,12 +35,10 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final playerName = ref.watch(scoresProvider).playerName;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: UIColors.green,
-        backgroundColor: UIColors.black,
         selectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 14,
@@ -53,13 +59,14 @@ class _HomeLayoutState extends State<HomeLayout> {
             label: 'Play',
             backgroundColor: UIColors.black,
           ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.emoji_events),
+          if (playerName == vipUsers)
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.emoji_events),
+              ),
+              label: 'Leaderboard',
             ),
-            label: 'Leaderboard',
-          ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -69,8 +76,7 @@ class _HomeLayoutState extends State<HomeLayout> {
           ),
         ],
       ),
-      backgroundColor: UIColors.darkGray,
-      body: _pages[_currentIndex],
+      body: pages[_currentIndex],
     );
   }
 }
